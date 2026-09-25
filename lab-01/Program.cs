@@ -1,11 +1,31 @@
+using FluentValidation;
 using lab_01.Data;
 using lab_01.Models.Entities;
+using lab_01.Repositories.Implementations;
+using lab_01.Repositories.Interfaces;
+using lab_01.Validators.Hotel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped(
+    typeof(IRepository<>),
+    typeof(Repository<>)
+);
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
+builder.Services.AddAutoMapper(
+    cfg => { },
+    typeof(Program).Assembly
+);
+
+builder.Services.AddValidatorsFromAssemblyContaining<HotelCreateDtoValidator>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
