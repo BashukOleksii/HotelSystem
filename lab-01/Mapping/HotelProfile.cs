@@ -9,7 +9,7 @@ namespace lab_01.Mapping
         public HotelProfile()
         {
             CreateMap<HotelCreateDto, Hotel>();
-            CreateMap<HotelCreateDto, Hotel>();
+            CreateMap<Hotel, HotelReadDto>();
             CreateMap<HotelUpdateDto, Hotel>()
                 .ForAllMembers(option =>
                 {
