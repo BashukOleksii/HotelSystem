@@ -5,9 +5,10 @@ namespace lab_01.Repositories.Interfaces
     public interface IRepository<T> where T : BaseEntry
     {
         Task<T?> GetByIdAsync(string id);
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IReadOnlyList<T>> GetAllAsync();
         Task AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        Task<int> SaveChangesAsync();
     }
 }
