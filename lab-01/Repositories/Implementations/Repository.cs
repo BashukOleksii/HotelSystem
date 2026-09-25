@@ -1,12 +1,11 @@
-﻿namespace lab_01.Repositories.Implementations
-{
-    using global::lab_01.Data;
-    using global::lab_01.Models.Entities.Base;
-    using global::lab_01.Repositories.Interfaces;
-    using Microsoft.EntityFrameworkCore;
+﻿using lab_01.Data;
+using lab_01.Models.Entities.Base;
+using lab_01.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-    namespace lab_01.Repositories.Implementations
-    {
+namespace lab_01.Repositories.Implementations
+{
+
         public class Repository<T> : IRepository<T>
             where T : BaseEntry
         {
@@ -55,5 +54,5 @@
                 return await _context.SaveChangesAsync();
             }
         }
-    }
+    
 }

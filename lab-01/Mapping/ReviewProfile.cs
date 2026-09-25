@@ -16,4 +16,5 @@ namespace lab_01.Mapping
                     option.Condition((src, dest, srcMember) => srcMember != null);
                 });
         }
+    }
 }

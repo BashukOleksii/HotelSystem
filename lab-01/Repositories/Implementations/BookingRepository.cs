@@ -1,7 +1,6 @@
 ﻿using lab_01.Common.Pagination;
 using lab_01.Data;
 using lab_01.Models.Entities;
-using lab_01.Repositories.Implementations.lab_01.Repositories.Implementations;
 using lab_01.Repositories.Interfaces;
 using lab_01.Repositories.Queries;
 using Microsoft.EntityFrameworkCore;

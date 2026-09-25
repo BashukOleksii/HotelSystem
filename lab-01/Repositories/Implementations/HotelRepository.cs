@@ -1,14 +1,13 @@
-﻿namespace lab_01.Repositories.Implementations
-{
-    using global::lab_01.Common.Pagination;
-    using global::lab_01.Data;
-    using global::lab_01.Models.Entities;
-    using global::lab_01.Repositories.Interfaces;
-    using global::lab_01.Repositories.Queries;
-    using Microsoft.EntityFrameworkCore;
+﻿using lab_01.Common.Pagination;
+using lab_01.Data;
+using lab_01.Models.Entities;
+using lab_01.Repositories.Interfaces;
+using lab_01.Repositories.Queries;
+using Microsoft.EntityFrameworkCore;
 
-    namespace lab_01.Repositories.Implementations
-    {
+namespace lab_01.Repositories.Implementations
+{
+
         public class HotelRepository
             : Repository<Hotel>, IHotelRepository
         {
@@ -26,7 +25,7 @@
                     .FirstOrDefaultAsync(h => h.Id == id);
             }
 
-            public async Task<PagedResult<Hotel>> SearchAsync(
+        public async Task<PagedResult<Hotel>> SearchAsync(
                 HotelQuery query)
             {
                 IQueryable<Hotel> hotels = _context.Hotels
@@ -106,5 +105,5 @@
                 };
             }
         }
-    }
+    
 }
