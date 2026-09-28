@@ -3,6 +3,8 @@ using lab_01.Data;
 using lab_01.Models.Entities;
 using lab_01.Repositories.Implementations;
 using lab_01.Repositories.Interfaces;
+using lab_01.Services.Implementations;
+using lab_01.Services.Interfaces;
 using lab_01.Validators.Hotel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +21,9 @@ builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IRoomService, RoomService>();
 
 builder.Services.AddAutoMapper(
     cfg => { },

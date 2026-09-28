@@ -8,6 +8,6 @@ namespace lab_01.DTOs.Room
         public RoomType? Type { get; set; }
         public decimal? CostPerNight { get; set; }
         public int? Capacity { get; set; }
-        public bool? IsAvailable { get; set; } = true;
+        public bool? IsAvailable { get; set; }
     }
 }
