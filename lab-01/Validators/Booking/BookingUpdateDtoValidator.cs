@@ -11,17 +11,22 @@ namespace lab_01.Validators.Booking
             RuleFor(x => x.CheckIn)
                 .Must(date =>
                     !date.HasValue ||
-                    date.Value >= DateTime.UtcNow.Date
+                    date.Value.Date >= DateTime.UtcNow.Date
                 )
-                .WithMessage("Дата заселення не може бути в минулому.");
+                .WithMessage(
+                    "Дата заселення не може бути в минулому."
+                );
 
             RuleFor(x => x)
                 .Must(dto =>
                     !dto.CheckIn.HasValue ||
                     !dto.CheckOut.HasValue ||
-                    dto.CheckOut.Value > dto.CheckIn.Value
+                    dto.CheckOut.Value.Date >
+                    dto.CheckIn.Value.Date
                 )
-                .WithMessage("Дата виселення повинна бути пізнішою за дату заселення.");
+                .WithMessage(
+                    "Дата виселення повинна бути пізнішою за дату заселення."
+                );
 
             RuleFor(x => x)
                 .Must(dto =>
