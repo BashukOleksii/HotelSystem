@@ -1,0 +1,47 @@
+﻿@model HotelReadDto
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+
+<a
+    asp-controller="Hotels"
+    asp-action="Index"
+    class="btn btn-link px-0 mb-3">
+
+    ← До списку готелів
+
+</a>
+
+
+<h1>
+    @Model.Name
+</h1>
+
+
+@if (!string.IsNullOrWhiteSpace(
+    Model.Description))
+{
+    <p class="lead">
+
+        @Model.Description
+
+    </p>
+}
+
+
+<hr />
+
+
+<h4>
+    Адреса
+</h4>
+
+<p>
+
+    @Model.Address.City,
+    @Model.Address.Street
+    @Model.Address.Number
+
+</p>

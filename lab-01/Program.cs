@@ -61,6 +61,8 @@ builder.Services.AddExceptionHandler<
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
 using (var scope = app.Services.CreateScope())
 {
     await DbInitializer.InitializeAsync(scope.ServiceProvider);
@@ -80,9 +82,16 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+)
+.WithStaticAssets();
+
+app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Hotels}/{action=Index}/{id?}"
+)
+.WithStaticAssets();
 
 
 app.Run();

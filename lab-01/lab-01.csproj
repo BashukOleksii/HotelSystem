@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\" />
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>

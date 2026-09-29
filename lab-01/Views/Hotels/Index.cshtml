@@ -1,0 +1,214 @@
+﻿@model HotelIndexViewModel
+
+@{
+    ViewData["Title"] = "Готелі";
+}
+
+
+<h1 class="mb-4">
+    Готелі
+</h1>
+
+
+<form
+    method="get"
+    asp-controller="Hotels"
+    asp-action="Index"
+    class="row g-3 mb-4">
+
+    <div class="col-md-4">
+
+        <label
+            class="form-label">
+
+            Пошук
+
+        </label>
+
+        <input
+            type="text"
+            name="Search"
+            value="@Model.Filter.Search"
+            class="form-control"
+            placeholder="Назва або опис" />
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Місто
+        </label>
+
+        <input
+            type="text"
+            name="City"
+            value="@Model.Filter.City"
+            class="form-control"
+            placeholder="Київ" />
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Сортування
+        </label>
+
+        <select
+            name="SortBy"
+            class="form-select">
+
+            <option value="">
+                За назвою
+            </option>
+
+            <option
+                value="name"
+                selected="@(Model.Filter.SortBy == "name")">
+
+                Назва
+
+            </option>
+
+            <option
+                value="city"
+                selected="@(Model.Filter.SortBy == "city")">
+
+                Місто
+
+            </option>
+
+            <option
+                value="createdat"
+                selected="@(Model.Filter.SortBy == "createdat")">
+
+                Дата створення
+
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2 d-flex align-items-end">
+
+        <button
+            type="submit"
+            class="btn btn-primary w-100">
+
+            Знайти
+
+        </button>
+
+    </div>
+
+</form>
+
+
+@if (Model.Hotels.Items.Count == 0)
+{
+    <div class="alert alert-info">
+
+        Готелів за заданими параметрами не знайдено.
+
+    </div>
+}
+else
+{
+    <div class="row g-4">
+
+        @foreach (HotelReadDto hotel in Model.Hotels.Items)
+        {
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            @hotel.Name
+                        </h5>
+
+                        <p class="card-text">
+
+                            @hotel.Address.City,
+                            @hotel.Address.Street
+                            @hotel.Address.Number
+
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            hotel.Description))
+                        {
+                            <p class="card-text text-muted">
+
+                                @hotel.Description
+
+                            </p>
+                        }
+
+                    </div>
+
+
+                    <div class="card-footer bg-transparent">
+
+                        <a
+                            asp-controller="Hotels"
+                            asp-action="Details"
+                            asp-route-id="@hotel.Id"
+                            class="btn btn-outline-primary">
+
+                            Детальніше
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+}
+
+@if (Model.Hotels.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination">
+
+            @for (
+                int pageNumber = 1;
+                pageNumber <= Model.Hotels.TotalPages;
+                pageNumber++)
+            {
+                <li class="
+                    page-item
+                    @(pageNumber == Model.Hotels.Page ? "active" : "")
+                ">
+
+                    <a
+                        class="page-link"
+                        asp-controller="Hotels"
+                        asp-action="Index"
+                        asp-route-Search="@Model.Filter.Search"
+                        asp-route-City="@Model.Filter.City"
+                        asp-route-SortBy="@Model.Filter.SortBy"
+                        asp-route-Descending="@Model.Filter.Descending"
+                        asp-route-Page="@pageNumber"
+                        asp-route-PageSize="@Model.Filter.PageSize">
+
+                        @pageNumber
+
+                    </a>
+
+                </li>
+            }
+
+        </ul>
+    </nav>
+}
