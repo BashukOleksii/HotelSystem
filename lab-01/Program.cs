@@ -1,5 +1,6 @@
 using FluentValidation;
 using lab_01.Data;
+using lab_01.ExceptionHandling;
 using lab_01.Models.Entities;
 using lab_01.Repositories.Implementations;
 using lab_01.Repositories.Interfaces;
@@ -52,6 +53,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<
+    GlobalExceptionHandler
+>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -60,10 +67,8 @@ using (var scope = app.Services.CreateScope())
 }
 
 if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
