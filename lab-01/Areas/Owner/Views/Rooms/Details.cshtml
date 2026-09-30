@@ -1,0 +1,82 @@
+﻿@model RoomReadDto
+
+@{
+    ViewData["Title"] =
+        $"Кімната {Model.RoomNumber}";
+}
+
+
+<h1 class="mb-4">
+    Кімната @Model.RoomNumber
+</h1>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Тип
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Type
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Місткість
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Capacity
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Ціна за ніч
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CostPerNight.ToString("0.00")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Статус
+    </dt>
+
+    <dd class="col-sm-9">
+
+        @if (Model.IsAvailable)
+        {
+            <span class="badge bg-success">
+                Доступна
+            </span>
+        }
+        else
+        {
+            <span class="badge bg-danger">
+                Недоступна
+            </span>
+        }
+
+    </dd>
+
+</dl>
+
+
+<a asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary">
+
+    Редагувати
+
+</a>
+
+
+<a asp-action="Index"
+   asp-route-hotelId="@Model.HotelId"
+   class="btn btn-secondary">
+
+    Назад
+
+</a>

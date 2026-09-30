@@ -1,0 +1,116 @@
+﻿@model RoomUpdateDto
+
+@{
+    ViewData["Title"] = "Редагування кімнати";
+}
+
+
+<h1 class="mb-4">
+    Редагування кімнати
+</h1>
+
+
+<form method="post">
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger mb-3">
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="RoomNumber"
+               class="form-label">
+
+            Номер
+
+        </label>
+
+        <input asp-for="RoomNumber"
+               class="form-control" />
+
+        <span asp-validation-for="RoomNumber"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Type"
+               class="form-label">
+            Тип
+        </label>
+
+        <select asp-for="Type"
+                class="form-select">
+
+            @foreach (
+                RoomType roomType
+                in Enum.GetValues<RoomType>())
+            {
+                <option value="@roomType">
+                    @roomType
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="CostPerNight"
+               class="form-label">
+            Ціна за ніч
+        </label>
+
+        <input asp-for="CostPerNight"
+               type="number"
+               min="0"
+               step="0.01"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Capacity"
+               class="form-label">
+            Місткість
+        </label>
+
+        <input asp-for="Capacity"
+               type="number"
+               min="1"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="form-check mb-3">
+
+        <input asp-for="IsAvailable"
+               class="form-check-input" />
+
+        <label asp-for="IsAvailable"
+               class="form-check-label">
+
+            Кімната доступна
+
+        </label>
+
+    </div>
+
+
+    <button type="submit"
+            class="btn btn-primary">
+
+        Зберегти
+
+    </button>
+
+</form>

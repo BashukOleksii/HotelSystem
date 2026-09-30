@@ -59,6 +59,33 @@ namespace lab_01.Services.Implementations
             );
         }
 
+        public async Task<RoomReadDto> GetOwnerRoomByIdAsync(
+            string id,
+            string ownerId)
+        {
+            Room? room =
+                await _roomRepository.GetByIdAsync(
+                    id
+                );
+
+            if (room is null)
+            {
+                throw new NotFoundException(
+                    nameof(Room),
+                    id
+                );
+            }
+
+            await GetOwnedHotelAsync(
+                room.HotelId,
+                ownerId
+            );
+
+            return _mapper.Map<RoomReadDto>(
+                room
+            );
+        }
+
         public async Task<PagedResult<RoomReadDto>>
             SearchAsync(
                 RoomFilterDto filter)

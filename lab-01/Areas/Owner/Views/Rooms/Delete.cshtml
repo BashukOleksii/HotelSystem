@@ -1,0 +1,66 @@
+﻿@model RoomReadDto
+
+@{
+    ViewData["Title"] = "Видалення кімнати";
+}
+
+
+<h1>
+    Видалення кімнати
+</h1>
+
+
+<div class="alert alert-warning">
+
+    Ви впевнені, що хочете видалити
+    кімнату
+
+    <strong>
+        @Model.RoomNumber
+    </strong>?
+
+</div>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Тип
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Type
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Ціна
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CostPerNight.ToString("0.00")
+    </dd>
+
+</dl>
+
+
+<form method="post"
+      asp-action="Delete"
+      asp-route-id="@Model.Id">
+
+    <button type="submit"
+            class="btn btn-danger">
+
+        Видалити
+
+    </button>
+
+    <a asp-action="Index"
+       asp-route-hotelId="@Model.HotelId"
+       class="btn btn-secondary">
+
+        Скасувати
+
+    </a>
+
+</form>

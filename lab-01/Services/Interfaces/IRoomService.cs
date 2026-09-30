@@ -9,6 +9,11 @@ namespace lab_01.Services.Interfaces
             string id
         );
 
+        Task<RoomReadDto> GetOwnerRoomByIdAsync(
+            string id,
+            string ownerId
+        );
+
         Task<PagedResult<RoomReadDto>> SearchAsync(
             RoomFilterDto filter
         );
