@@ -23,35 +23,53 @@
 <body>
 
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+       @if (User.Identity?.IsAuthenticated == true)
+{
+    <span class="navbar-text text-light ms-3">
 
-            <div class="container">
+        @User.Identity.Name
 
-                <a class="navbar-brand"
-                   asp-area=""
-                   asp-controller="Hotels"
-                   asp-action="Index">
+    </span>
 
-                    HotelSystem
+    <form
+        method="post"
+        asp-area=""
+        asp-controller="Account"
+        asp-action="Logout"
+        class="ms-3">
 
-                </a>
+        <button
+            type="submit"
+            class="btn btn-outline-light">
 
-                <div class="navbar-nav">
+            Вийти
 
-                    <a class="nav-link"
-                       asp-area=""
-                       asp-controller="Hotels"
-                       asp-action="Index">
+        </button>
 
-                        Готелі
+    </form>
+}
+else
+{
+    <a
+        class="nav-link"
+        asp-area=""
+        asp-controller="Account"
+        asp-action="Login">
 
-                    </a>
+        Увійти
 
-                </div>
+    </a>
 
-            </div>
+    <a
+        class="nav-link"
+        asp-area=""
+        asp-controller="Account"
+        asp-action="Register">
 
-        </nav>
+        Реєстрація
+
+    </a>
+}
     </header>
 
 

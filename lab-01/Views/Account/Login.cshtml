@@ -1,0 +1,83 @@
+﻿@model lab_01.DTOs.Auth.LoginDto
+
+@{
+    ViewData["Title"] = "Вхід";
+}
+
+<h1 class="mb-4">
+    Вхід
+</h1>
+
+
+<div class="row">
+
+    <div class="col-md-6 col-lg-4">
+
+        <form
+            method="post"
+            asp-controller="Account"
+            asp-action="Login">
+
+            <div
+                asp-validation-summary="ModelOnly"
+                class="text-danger mb-3">
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Email
+                </label>
+
+                <input
+                    asp-for="Email"
+                    class="form-control" />
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Пароль
+                </label>
+
+                <input
+                    asp-for="Password"
+                    type="password"
+                    class="form-control" />
+
+            </div>
+
+
+            <div class="form-check mb-3">
+
+                <input
+                    asp-for="RememberMe"
+                    class="form-check-input" />
+
+                <label
+                    asp-for="RememberMe"
+                    class="form-check-label">
+
+                    Запам'ятати мене
+
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary">
+
+                Увійти
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>

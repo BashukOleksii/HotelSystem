@@ -28,6 +28,7 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddAutoMapper(
     cfg => { },
@@ -52,6 +53,15 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 )
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath =
+        "/Account/Login";
+
+    options.AccessDeniedPath =
+        "/Account/AccessDenied";
+});
 
 builder.Services.AddProblemDetails();
 
