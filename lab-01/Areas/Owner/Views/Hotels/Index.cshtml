@@ -1,0 +1,260 @@
+﻿@model HotelIndexViewModel
+
+@{
+    ViewData["Title"] = "Мої готелі";
+}
+
+
+<div class="d-flex justify-content-between
+            align-items-center mb-4">
+
+    <h1>
+        Мої готелі
+    </h1>
+
+
+    <a asp-area="Owner"
+       asp-controller="Hotels"
+       asp-action="Create"
+       class="btn btn-primary">
+
+        Додати готель
+
+    </a>
+
+</div>
+
+
+<form method="get"
+      asp-area="Owner"
+      asp-controller="Hotels"
+      asp-action="Index"
+      class="row g-3 mb-4">
+
+
+    <div class="col-md-4">
+
+        <label class="form-label">
+            Пошук
+        </label>
+
+        <input type="text"
+               name="Search"
+               value="@Model.Filter.Search"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Місто
+        </label>
+
+        <input type="text"
+               name="City"
+               value="@Model.Filter.City"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Сортування
+        </label>
+
+        <select name="SortBy"
+                class="form-select">
+
+            <option value="">
+                За назвою
+            </option>
+
+            <option value="name"
+                    selected="@(Model.Filter.SortBy == "name")">
+                Назва
+            </option>
+
+            <option value="city"
+                    selected="@(Model.Filter.SortBy == "city")">
+                Місто
+            </option>
+
+            <option value="createdat"
+                    selected="@(Model.Filter.SortBy == "createdat")">
+                Дата створення
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2
+                d-flex align-items-end">
+
+        <button type="submit"
+                class="btn btn-outline-primary w-100">
+
+            Знайти
+
+        </button>
+
+    </div>
+
+</form>
+
+
+@if (Model.Hotels.Items.Count == 0)
+{
+    <div class="alert alert-info">
+
+        У вас поки немає готелів.
+
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+
+        <table class="table table-striped
+                      table-hover align-middle">
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Назва
+                </th>
+
+                <th>
+                    Місто
+                </th>
+
+                <th>
+                    Адреса
+                </th>
+
+                <th class="text-end">
+                    Дії
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            @foreach (HotelReadDto hotel
+                in Model.Hotels.Items)
+            {
+                <tr>
+
+                    <td>
+                        @hotel.Name
+                    </td>
+
+                    <td>
+                        @hotel.Address.City
+                    </td>
+
+                    <td>
+                        @hotel.Address.Street,
+                        @hotel.Address.Number
+                    </td>
+
+
+                    <td class="text-end">
+
+                        <a asp-area="Owner"
+                           asp-controller="Hotels"
+                           asp-action="Details"
+                           asp-route-id="@hotel.Id"
+                           class="btn btn-sm
+                                  btn-outline-secondary">
+
+                            Деталі
+
+                        </a>
+
+
+                        <a asp-area="Owner"
+                           asp-controller="Hotels"
+                           asp-action="Edit"
+                           asp-route-id="@hotel.Id"
+                           class="btn btn-sm
+                                  btn-outline-primary">
+
+                            Редагувати
+
+                        </a>
+
+
+                        <a asp-area="Owner"
+                           asp-controller="Hotels"
+                           asp-action="Delete"
+                           asp-route-id="@hotel.Id"
+                           class="btn btn-sm
+                                  btn-outline-danger">
+
+                            Видалити
+
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+
+            </tbody>
+
+        </table>
+
+        @if (Model.Hotels.TotalPages > 1)
+{
+    <nav>
+
+        <ul class="pagination">
+
+            @for (
+                int pageNumber = 1;
+                pageNumber <= Model.Hotels.TotalPages;
+                pageNumber++)
+            {
+                <li class="
+                    page-item
+                    @(pageNumber == Model.Hotels.Page
+                        ? "active"
+                        : "")
+                ">
+
+                    <a class="page-link"
+                       asp-area="Owner"
+                       asp-controller="Hotels"
+                       asp-action="Index"
+                       asp-route-Search="@Model.Filter.Search"
+                       asp-route-City="@Model.Filter.City"
+                       asp-route-SortBy="@Model.Filter.SortBy"
+                       asp-route-Descending="@Model.Filter.Descending"
+                       asp-route-Page="@pageNumber"
+                       asp-route-PageSize="@Model.Filter.PageSize">
+
+                        @pageNumber
+
+                    </a>
+
+                </li>
+            }
+
+        </ul>
+
+    </nav>
+}
+
+    </div>
+}

@@ -67,6 +67,33 @@ namespace lab_01.Services.Implementations
             };
         }
 
+        public async Task<HotelReadDto> GetOwnerHotelByIdAsync(
+            string id,
+            string ownerId)
+        {
+            Hotel? hotel =
+                await _hotelRepository.GetByIdAsync(
+                    id
+                );
+
+            if (hotel is null)
+            {
+                throw new NotFoundException(
+                    nameof(Hotel),
+                    id
+                );
+            }
+
+            EnsureOwner(
+                hotel,
+                ownerId
+            );
+
+            return _mapper.Map<HotelReadDto>(
+                hotel
+            );
+        }
+
         public async Task<PagedResult<HotelReadDto>>
         SearchAsync(
             HotelFilterDto filter)

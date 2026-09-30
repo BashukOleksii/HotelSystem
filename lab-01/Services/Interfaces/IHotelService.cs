@@ -9,6 +9,11 @@ namespace lab_01.Services.Interfaces
             string id
         );
 
+        Task<HotelReadDto> GetOwnerHotelByIdAsync(
+            string id,
+            string ownerId
+        );
+
         Task<PagedResult<HotelReadDto>> SearchAsync(
             HotelFilterDto filter
         );

@@ -28,7 +28,6 @@
 
         <div class="container">
 
-            <!-- Назва сайту -->
             <a class="navbar-brand"
                asp-area=""
                asp-controller="Hotels"
@@ -39,7 +38,6 @@
             </a>
 
 
-            <!-- Кнопка для мобільної версії -->
             <button class="navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
@@ -56,8 +54,6 @@
             <div class="collapse navbar-collapse"
                  id="mainNavbar">
 
-
-                <!-- Ліва частина Navbar -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
                     <li class="nav-item">
@@ -73,6 +69,21 @@
 
                     </li>
 
+                    @if (User.IsInRole("Owner"))
+                    {
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-area="Owner"
+                               asp-controller="Hotels"
+                               asp-action="Index">
+
+                                Кабінет власника
+
+                            </a>
+
+                        </li>
+                    }
 
                     @*
                         Тут трохи пізніше додамо:
@@ -86,7 +97,6 @@
                 </ul>
 
 
-                <!-- Права частина Navbar -->
                 <ul class="navbar-nav align-items-lg-center">
 
                     @if (User.Identity?.IsAuthenticated == true)
