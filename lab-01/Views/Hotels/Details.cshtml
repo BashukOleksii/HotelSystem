@@ -378,8 +378,10 @@ else
         </ul>
 
     </nav>
+}
 
-    <hr class="my-5" />
+
+<hr class="my-5" />
 
 
 <div class="d-flex justify-content-between
@@ -454,7 +456,8 @@ else
                             <div>
 
                                 <strong>
-                                    @(review.UserEmail ?? "Користувач")
+                                    @(review.UserEmail
+                                      ?? "Користувач")
                                 </strong>
 
                             </div>
@@ -496,5 +499,4 @@ else
         }
 
     </div>
-}
 }
