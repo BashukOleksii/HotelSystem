@@ -1,0 +1,75 @@
+﻿@model ReviewReadDto
+
+@{
+    ViewData["Title"] =
+        "Видалення відгуку";
+}
+
+
+<h1 class="mb-4">
+    Видалення відгуку
+</h1>
+
+
+<div class="alert alert-warning">
+
+    Ви впевнені, що хочете
+    видалити цей відгук?
+
+</div>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Готель
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.HotelName
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Оцінка
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Rating / 5
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Коментар
+    </dt>
+
+    <dd class="col-sm-9">
+        @(string.IsNullOrWhiteSpace(Model.Comment)
+            ? "—"
+            : Model.Comment)
+    </dd>
+
+</dl>
+
+
+<form method="post"
+      asp-action="Delete"
+      asp-route-id="@Model.Id">
+
+    <button type="submit"
+            class="btn btn-danger">
+
+        Видалити
+
+    </button>
+
+
+    <a asp-action="Details"
+       asp-route-id="@Model.Id"
+       class="btn btn-secondary">
+
+        Скасувати
+
+    </a>
+
+</form>

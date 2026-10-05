@@ -9,6 +9,11 @@ namespace lab_01.Services.Interfaces
             string id
         );
 
+        Task<ReviewReadDto> GetUserReviewByIdAsync(
+            string id,
+            string userId
+        );
+
         Task<PagedResult<ReviewReadDto>> SearchAsync(
             ReviewFilterDto filter
         );

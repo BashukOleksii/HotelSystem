@@ -1,5 +1,6 @@
 ﻿using lab_01.Common.Pagination;
 using lab_01.DTOs.Hotel;
+using lab_01.DTOs.Review;
 using lab_01.DTOs.Room;
 
 namespace lab_01.ViewModels.Hotels
@@ -14,5 +15,10 @@ namespace lab_01.ViewModels.Hotels
 
         public PagedResult<RoomReadDto> Rooms { get; set; }
             = new();
+
+        public PagedResult<ReviewReadDto> Reviews { get; set; }
+            = new();
+
+        public double? AverageRating { get; set; }
     }
 }

@@ -1,0 +1,93 @@
+﻿@model ReviewEditViewModel
+
+@{
+    ViewData["Title"] =
+        "Редагування відгуку";
+}
+
+
+<h1 class="mb-4">
+    Редагування відгуку
+</h1>
+
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>
+            @Model.Review.HotelName
+        </h4>
+
+    </div>
+
+</div>
+
+
+<form method="post"
+      asp-action="Edit"
+      asp-route-id="@Model.Review.Id">
+
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3">
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.Rating"
+               class="form-label">
+
+            Оцінка
+
+        </label>
+
+        <select asp-for="Form.Rating"
+                class="form-select">
+
+            <option value="5">5 — Відмінно</option>
+            <option value="4">4 — Добре</option>
+            <option value="3">3 — Нормально</option>
+            <option value="2">2 — Погано</option>
+            <option value="1">1 — Дуже погано</option>
+
+        </select>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.Comment"
+               class="form-label">
+
+            Коментар
+
+        </label>
+
+        <textarea asp-for="Form.Comment"
+                  class="form-control"
+                  rows="6">
+        </textarea>
+
+    </div>
+
+
+    <button type="submit"
+            class="btn btn-primary">
+
+        Зберегти
+
+    </button>
+
+
+    <a asp-action="Details"
+       asp-route-id="@Model.Review.Id"
+       class="btn btn-secondary">
+
+        Скасувати
+
+    </a>
+
+</form>

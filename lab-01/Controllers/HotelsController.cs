@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using lab_01.DTOs.Hotel;
+using lab_01.DTOs.Review;
 using lab_01.DTOs.Room;
 using lab_01.Services.Interfaces;
 using lab_01.ViewModels.Hotels;
@@ -13,13 +14,21 @@ namespace lab_01.Controllers
     {
         private readonly IHotelService _hotelService;
         private readonly IRoomService _roomService;
+        private readonly IReviewService _reviewService;
 
         public HotelsController(
             IHotelService hotelService,
-            IRoomService roomService)
+            IRoomService roomService,
+            IReviewService reviewService)
         {
-            _hotelService = hotelService;
-            _roomService = roomService;
+            _hotelService =
+                hotelService;
+
+            _roomService =
+                roomService;
+
+            _reviewService =
+                reviewService;
         }
 
         [HttpGet]
@@ -51,8 +60,11 @@ namespace lab_01.Controllers
                     id
                 );
 
-            filter.HotelId = id;
-            filter.IsAvailable = true;
+            filter.HotelId =
+                id;
+
+            filter.IsAvailable =
+                true;
 
             HotelDetailsViewModel model =
                 new HotelDetailsViewModel
@@ -74,6 +86,24 @@ namespace lab_01.Controllers
                     exception
                 );
             }
+
+            model.Reviews =
+                await _reviewService.SearchAsync(
+                    new ReviewFilterDto
+                    {
+                        HotelId = id,
+                        SortBy = "createdat",
+                        Descending = true,
+                        Page = 1,
+                        PageSize = 10
+                    }
+                );
+
+            model.AverageRating =
+                await _reviewService
+                    .GetAverageRatingAsync(
+                        id
+                    );
 
             return View(model);
         }

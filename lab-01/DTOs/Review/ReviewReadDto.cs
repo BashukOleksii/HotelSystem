@@ -5,8 +5,15 @@ namespace lab_01.DTOs.Review
     public class ReviewReadDto : BaseReadDto
     {
         public string HotelId { get; set; }
+
+        public string HotelName { get; set; }
+
         public string? UserId { get; set; }
+
+        public string? UserEmail { get; set; }
+
         public int Rating { get; set; }
+
         public string? Comment { get; set; }
     }
 }
