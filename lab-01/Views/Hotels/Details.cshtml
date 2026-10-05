@@ -1,14 +1,17 @@
-﻿@model HotelReadDto
+﻿@model HotelDetailsViewModel
 
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] =
+        Model.Hotel.Name;
+
+    string returnUrl =
+        $"{Context.Request.Path}{Context.Request.QueryString}";
 }
 
 
-<a
-    asp-controller="Hotels"
-    asp-action="Index"
-    class="btn btn-link px-0 mb-3">
+<a asp-controller="Hotels"
+   asp-action="Index"
+   class="btn btn-link px-0 mb-3">
 
     ← До списку готелів
 
@@ -16,17 +19,15 @@
 
 
 <h1>
-    @Model.Name
+    @Model.Hotel.Name
 </h1>
 
 
 @if (!string.IsNullOrWhiteSpace(
-    Model.Description))
+    Model.Hotel.Description))
 {
     <p class="lead">
-
-        @Model.Description
-
+        @Model.Hotel.Description
     </p>
 }
 
@@ -39,9 +40,342 @@
 </h4>
 
 <p>
-
-    @Model.Address.City,
-    @Model.Address.Street
-    @Model.Address.Number
-
+    @Model.Hotel.Address.City,
+    @Model.Hotel.Address.Street
+    @Model.Hotel.Address.Number
 </p>
+
+
+<hr />
+
+
+<h3 class="mb-3">
+    Пошук кімнат
+</h3>
+
+
+<div asp-validation-summary="All"
+     class="text-danger mb-3">
+</div>
+
+
+<form method="get"
+      asp-controller="Hotels"
+      asp-action="Details"
+      asp-route-id="@Model.Hotel.Id"
+      class="row g-3 mb-4">
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Заселення
+        </label>
+
+        <input type="date"
+               name="CheckIn"
+               value="@Model.Filter.CheckIn?.ToString("yyyy-MM-dd")"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Виселення
+        </label>
+
+        <input type="date"
+               name="CheckOut"
+               value="@Model.Filter.CheckOut?.ToString("yyyy-MM-dd")"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Гостей
+        </label>
+
+        <input type="number"
+               name="MinCapacity"
+               value="@Model.Filter.MinCapacity"
+               min="1"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Тип
+        </label>
+
+        <select name="Type"
+                class="form-select">
+
+            <option value="">
+                Всі
+            </option>
+
+            @foreach (
+                RoomType roomType
+                in Enum.GetValues<RoomType>())
+            {
+                <option value="@roomType"
+                        selected="@(Model.Filter.Type == roomType)">
+                    @roomType
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Мін. ціна
+        </label>
+
+        <input type="number"
+               name="MinPrice"
+               value="@Model.Filter.MinPrice"
+               min="0"
+               step="0.01"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-2">
+
+        <label class="form-label">
+            Макс. ціна
+        </label>
+
+        <input type="number"
+               name="MaxPrice"
+               value="@Model.Filter.MaxPrice"
+               min="0"
+               step="0.01"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Сортування
+        </label>
+
+        <select name="SortBy"
+                class="form-select">
+
+            <option value="">
+                За номером
+            </option>
+
+            <option value="number"
+                    selected="@(Model.Filter.SortBy == "number")">
+                Номер
+            </option>
+
+            <option value="price"
+                    selected="@(Model.Filter.SortBy == "price")">
+                Ціна
+            </option>
+
+            <option value="capacity"
+                    selected="@(Model.Filter.SortBy == "capacity")">
+                Місткість
+            </option>
+
+            <option value="type"
+                    selected="@(Model.Filter.SortBy == "type")">
+                Тип
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Порядок
+        </label>
+
+        <select name="Descending"
+                class="form-select">
+
+            <option value="false"
+                    selected="@(!Model.Filter.Descending)">
+                За зростанням
+            </option>
+
+            <option value="true"
+                    selected="@Model.Filter.Descending">
+                За спаданням
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="col-md-3 d-flex align-items-end">
+
+        <button type="submit"
+                class="btn btn-primary w-100">
+
+            Знайти кімнати
+
+        </button>
+
+    </div>
+
+</form>
+
+
+@if (Model.Rooms.Items.Count == 0)
+{
+    <div class="alert alert-info">
+
+        Доступних кімнат за заданими
+        параметрами не знайдено.
+
+    </div>
+}
+else
+{
+    <div class="row g-4">
+
+        @foreach (
+            RoomReadDto room
+            in Model.Rooms.Items)
+        {
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm">
+
+                    <div class="card-body">
+
+                        <h5 class="card-title">
+                            Кімната @room.RoomNumber
+                        </h5>
+
+                        <p class="mb-2">
+                            Тип:
+                            <strong>
+                                @room.Type
+                            </strong>
+                        </p>
+
+                        <p class="mb-2">
+                            Місткість:
+                            <strong>
+                                @room.Capacity
+                            </strong>
+                        </p>
+
+                        <p class="mb-2">
+                            Ціна за ніч:
+                            <strong>
+                                @room.CostPerNight.ToString("0.00")
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <div class="card-footer bg-transparent">
+
+                        @if (User.IsInRole("User"))
+                        {
+                            <a asp-controller="Bookings"
+                               asp-action="Create"
+                               asp-route-roomId="@room.Id"
+                               asp-route-checkIn="@Model.Filter.CheckIn?.ToString("yyyy-MM-dd")"
+                               asp-route-checkOut="@Model.Filter.CheckOut?.ToString("yyyy-MM-dd")"
+                               class="btn btn-success w-100">
+
+                                Забронювати
+
+                            </a>
+                        }
+                        else if (
+                            User.Identity?.IsAuthenticated != true)
+                        {
+                            <a asp-controller="Account"
+                               asp-action="Login"
+                               asp-route-returnUrl="@returnUrl"
+                               class="btn btn-outline-primary w-100">
+
+                                Увійти, щоб забронювати
+
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+}
+
+
+@if (Model.Rooms.TotalPages > 1)
+{
+    <nav class="mt-4">
+
+        <ul class="pagination">
+
+            @for (
+                int pageNumber = 1;
+                pageNumber <= Model.Rooms.TotalPages;
+                pageNumber++)
+            {
+                <li class="
+                    page-item
+                    @(pageNumber == Model.Rooms.Page
+                        ? "active"
+                        : "")
+                ">
+
+                    <a class="page-link"
+                       asp-controller="Hotels"
+                       asp-action="Details"
+                       asp-route-id="@Model.Hotel.Id"
+                       asp-route-CheckIn="@Model.Filter.CheckIn?.ToString("yyyy-MM-dd")"
+                       asp-route-CheckOut="@Model.Filter.CheckOut?.ToString("yyyy-MM-dd")"
+                       asp-route-MinCapacity="@Model.Filter.MinCapacity"
+                       asp-route-Type="@Model.Filter.Type"
+                       asp-route-MinPrice="@Model.Filter.MinPrice"
+                       asp-route-MaxPrice="@Model.Filter.MaxPrice"
+                       asp-route-SortBy="@Model.Filter.SortBy"
+                       asp-route-Descending="@Model.Filter.Descending"
+                       asp-route-Page="@pageNumber"
+                       asp-route-PageSize="@Model.Filter.PageSize">
+
+                        @pageNumber
+
+                    </a>
+
+                </li>
+            }
+
+        </ul>
+
+    </nav>
+}
