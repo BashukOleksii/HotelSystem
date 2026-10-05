@@ -14,6 +14,8 @@ namespace lab_01.Services.Implementations
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IHotelRepository _hotelRepository;
+        private readonly IRepository<ReviewPhoto> _reviewPhotoRepository;
+
         private readonly IMapper _mapper;
 
         private readonly IValidator<ReviewCreateDto> _createValidator;
@@ -23,19 +25,34 @@ namespace lab_01.Services.Implementations
         public ReviewService(
             IReviewRepository reviewRepository,
             IHotelRepository hotelRepository,
+            IRepository<ReviewPhoto> reviewPhotoRepository,
             IMapper mapper,
             IValidator<ReviewCreateDto> createValidator,
             IValidator<ReviewUpdateDto> updateValidator,
             IValidator<ReviewQuery> queryValidator)
         {
-            _reviewRepository = reviewRepository;
-            _hotelRepository = hotelRepository;
-            _mapper = mapper;
+            _reviewRepository =
+                reviewRepository;
 
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
-            _queryValidator = queryValidator;
+            _hotelRepository =
+                hotelRepository;
+
+            _reviewPhotoRepository =
+                reviewPhotoRepository;
+
+            _mapper =
+                mapper;
+
+            _createValidator =
+                createValidator;
+
+            _updateValidator =
+                updateValidator;
+
+            _queryValidator =
+                queryValidator;
         }
+
 
         public async Task<ReviewReadDto> GetByIdAsync(
             string id)
@@ -58,6 +75,7 @@ namespace lab_01.Services.Implementations
                 review
             );
         }
+
 
         public async Task<ReviewReadDto>
             GetUserReviewByIdAsync(
@@ -88,6 +106,7 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         public async Task<PagedResult<ReviewReadDto>>
             SearchAsync(
                 ReviewFilterDto filter)
@@ -112,6 +131,7 @@ namespace lab_01.Services.Implementations
                 result
             );
         }
+
 
         public async Task<PagedResult<ReviewReadDto>>
             SearchUserReviewsAsync(
@@ -140,6 +160,7 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         public async Task<double?> GetAverageRatingAsync(
             string hotelId)
         {
@@ -152,6 +173,7 @@ namespace lab_01.Services.Implementations
                     hotelId
                 );
         }
+
 
         public async Task<ReviewReadDto> CreateAsync(
             string userId,
@@ -185,11 +207,17 @@ namespace lab_01.Services.Implementations
                     dto
                 );
 
-            review.UserId = userId;
+            review.UserId =
+                userId;
 
-            foreach (string url in dto.PhotoUrls)
+            await _reviewRepository.AddAsync(
+                review
+            );
+
+            foreach (string url
+                in dto.PhotoUrls)
             {
-                review.Photos.Add(
+                ReviewPhoto photo =
                     new ReviewPhoto
                     {
                         ReviewId =
@@ -197,13 +225,13 @@ namespace lab_01.Services.Implementations
 
                         Url =
                             url
-                    }
-                );
-            }
+                    };
 
-            await _reviewRepository.AddAsync(
-                review
-            );
+                await _reviewPhotoRepository
+                    .AddAsync(
+                        photo
+                    );
+            }
 
             await _reviewRepository
                 .SaveChangesAsync();
@@ -212,6 +240,7 @@ namespace lab_01.Services.Implementations
                 review.Id
             );
         }
+
 
         public async Task<ReviewReadDto> UpdateAsync(
             string id,
@@ -224,9 +253,10 @@ namespace lab_01.Services.Implementations
                 );
 
             Review? review =
-                await _reviewRepository.GetByIdAsync(
-                    id
-                );
+                await _reviewRepository
+                    .GetByIdAsync(
+                        id
+                    );
 
             if (review is null)
             {
@@ -246,9 +276,14 @@ namespace lab_01.Services.Implementations
                 review
             );
 
-            foreach (string url in dto.NewPhotoUrls)
+            _reviewRepository.Update(
+                review
+            );
+
+            foreach (string url
+                in dto.NewPhotoUrls)
             {
-                review.Photos.Add(
+                ReviewPhoto photo =
                     new ReviewPhoto
                     {
                         ReviewId =
@@ -256,13 +291,13 @@ namespace lab_01.Services.Implementations
 
                         Url =
                             url
-                    }
-                );
-            }
+                    };
 
-            _reviewRepository.Update(
-                review
-            );
+                await _reviewPhotoRepository
+                    .AddAsync(
+                        photo
+                    );
+            }
 
             await _reviewRepository
                 .SaveChangesAsync();
@@ -272,14 +307,16 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         public async Task DeleteAsync(
             string id,
             string userId)
         {
             Review? review =
-                await _reviewRepository.GetByIdAsync(
-                    id
-                );
+                await _reviewRepository
+                    .GetByIdAsync(
+                        id
+                    );
 
             if (review is null)
             {
@@ -302,13 +339,15 @@ namespace lab_01.Services.Implementations
                 .SaveChangesAsync();
         }
 
+
         public async Task DeleteAsAdminAsync(
             string id)
         {
             Review? review =
-                await _reviewRepository.GetByIdAsync(
-                    id
-                );
+                await _reviewRepository
+                    .GetByIdAsync(
+                        id
+                    );
 
             if (review is null)
             {
@@ -325,6 +364,7 @@ namespace lab_01.Services.Implementations
             await _reviewRepository
                 .SaveChangesAsync();
         }
+
 
         private async Task<ReviewReadDto>
             GetDetailedReviewAsync(
@@ -349,23 +389,42 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         private static ReviewQuery CreateQuery(
             ReviewFilterDto filter,
             string? userId = null)
         {
             return new ReviewQuery
             {
-                Search = filter.Search,
-                HotelId = filter.HotelId,
-                UserId = userId,
-                MinRating = filter.MinRating,
-                MaxRating = filter.MaxRating,
-                SortBy = filter.SortBy,
-                Descending = filter.Descending,
-                Page = filter.Page,
-                PageSize = filter.PageSize
+                Search =
+                    filter.Search,
+
+                HotelId =
+                    filter.HotelId,
+
+                UserId =
+                    userId,
+
+                MinRating =
+                    filter.MinRating,
+
+                MaxRating =
+                    filter.MaxRating,
+
+                SortBy =
+                    filter.SortBy,
+
+                Descending =
+                    filter.Descending,
+
+                Page =
+                    filter.Page,
+
+                PageSize =
+                    filter.PageSize
             };
         }
+
 
         private PagedResult<ReviewReadDto>
             MapPagedResult(
@@ -378,19 +437,26 @@ namespace lab_01.Services.Implementations
                         IReadOnlyList<ReviewReadDto>
                     >(result.Items),
 
-                Page = result.Page,
-                PageSize = result.PageSize,
-                TotalCount = result.TotalCount
+                Page =
+                    result.Page,
+
+                PageSize =
+                    result.PageSize,
+
+                TotalCount =
+                    result.TotalCount
             };
         }
+
 
         private async Task<Hotel> GetHotelAsync(
             string hotelId)
         {
             Hotel? hotel =
-                await _hotelRepository.GetByIdAsync(
-                    hotelId
-                );
+                await _hotelRepository
+                    .GetByIdAsync(
+                        hotelId
+                    );
 
             if (hotel is null)
             {
@@ -402,6 +468,7 @@ namespace lab_01.Services.Implementations
 
             return hotel;
         }
+
 
         private static void EnsureUserReview(
             Review review,

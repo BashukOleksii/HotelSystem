@@ -13,6 +13,8 @@ namespace lab_01.Services.Implementations
     public class HotelService : IHotelService
     {
         private readonly IHotelRepository _hotelRepository;
+        private readonly IRepository<HotelPhoto> _hotelPhotoRepository;
+
         private readonly IMapper _mapper;
 
         private readonly IValidator<HotelCreateDto> _createValidator;
@@ -21,6 +23,7 @@ namespace lab_01.Services.Implementations
 
         public HotelService(
             IHotelRepository hotelRepository,
+            IRepository<HotelPhoto> hotelPhotoRepository,
             IMapper mapper,
             IValidator<HotelCreateDto> createValidator,
             IValidator<HotelUpdateDto> updateValidator,
@@ -28,6 +31,9 @@ namespace lab_01.Services.Implementations
         {
             _hotelRepository =
                 hotelRepository;
+
+            _hotelPhotoRepository =
+                hotelPhotoRepository;
 
             _mapper =
                 mapper;
@@ -41,6 +47,7 @@ namespace lab_01.Services.Implementations
             _queryValidator =
                 queryValidator;
         }
+
 
         public async Task<HotelReadDto> GetByIdAsync(
             string id)
@@ -63,6 +70,7 @@ namespace lab_01.Services.Implementations
                 hotel
             );
         }
+
 
         public async Task<HotelReadDto>
             GetOwnerHotelByIdAsync(
@@ -93,6 +101,7 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         public async Task<PagedResult<HotelReadDto>>
             SearchAsync(
                 HotelFilterDto filter)
@@ -108,14 +117,16 @@ namespace lab_01.Services.Implementations
                 );
 
             PagedResult<Hotel> result =
-                await _hotelRepository.SearchAsync(
-                    query
-                );
+                await _hotelRepository
+                    .SearchAsync(
+                        query
+                    );
 
             return MapPagedResult(
                 result
             );
         }
+
 
         public async Task<PagedResult<HotelReadDto>>
             SearchOwnerHotelsAsync(
@@ -143,14 +154,16 @@ namespace lab_01.Services.Implementations
                 );
 
             PagedResult<Hotel> result =
-                await _hotelRepository.SearchAsync(
-                    query
-                );
+                await _hotelRepository
+                    .SearchAsync(
+                        query
+                    );
 
             return MapPagedResult(
                 result
             );
         }
+
 
         public async Task<HotelReadDto> CreateAsync(
             string ownerId,
@@ -178,10 +191,14 @@ namespace lab_01.Services.Implementations
             hotel.OwnerId =
                 ownerId;
 
+            await _hotelRepository.AddAsync(
+                hotel
+            );
+
             foreach (string url
                 in dto.PhotoUrls)
             {
-                hotel.Photos.Add(
+                HotelPhoto photo =
                     new HotelPhoto
                     {
                         HotelId =
@@ -189,21 +206,36 @@ namespace lab_01.Services.Implementations
 
                         Url =
                             url
-                    }
-                );
-            }
+                    };
 
-            await _hotelRepository.AddAsync(
-                hotel
-            );
+                await _hotelPhotoRepository
+                    .AddAsync(
+                        photo
+                    );
+            }
 
             await _hotelRepository
                 .SaveChangesAsync();
 
+            Hotel? createdHotel =
+                await _hotelRepository
+                    .GetByIdWithDetailsAsync(
+                        hotel.Id
+                    );
+
+            if (createdHotel is null)
+            {
+                throw new NotFoundException(
+                    nameof(Hotel),
+                    hotel.Id
+                );
+            }
+
             return _mapper.Map<HotelReadDto>(
-                hotel
+                createdHotel
             );
         }
+
 
         public async Task<HotelReadDto> UpdateAsync(
             string id,
@@ -216,9 +248,10 @@ namespace lab_01.Services.Implementations
                 );
 
             Hotel? hotel =
-                await _hotelRepository.GetByIdAsync(
-                    id
-                );
+                await _hotelRepository
+                    .GetByIdAsync(
+                        id
+                    );
 
             if (hotel is null)
             {
@@ -238,10 +271,14 @@ namespace lab_01.Services.Implementations
                 hotel
             );
 
+            _hotelRepository.Update(
+                hotel
+            );
+
             foreach (string url
                 in dto.NewPhotoUrls)
             {
-                hotel.Photos.Add(
+                HotelPhoto photo =
                     new HotelPhoto
                     {
                         HotelId =
@@ -249,13 +286,13 @@ namespace lab_01.Services.Implementations
 
                         Url =
                             url
-                    }
-                );
-            }
+                    };
 
-            _hotelRepository.Update(
-                hotel
-            );
+                await _hotelPhotoRepository
+                    .AddAsync(
+                        photo
+                    );
+            }
 
             await _hotelRepository
                 .SaveChangesAsync();
@@ -279,14 +316,16 @@ namespace lab_01.Services.Implementations
             );
         }
 
+
         public async Task DeleteAsync(
             string id,
             string ownerId)
         {
             Hotel? hotel =
-                await _hotelRepository.GetByIdAsync(
-                    id
-                );
+                await _hotelRepository
+                    .GetByIdAsync(
+                        id
+                    );
 
             if (hotel is null)
             {
@@ -308,6 +347,7 @@ namespace lab_01.Services.Implementations
             await _hotelRepository
                 .SaveChangesAsync();
         }
+
 
         private static HotelQuery CreateQuery(
             HotelFilterDto filter,
@@ -338,6 +378,7 @@ namespace lab_01.Services.Implementations
             };
         }
 
+
         private PagedResult<HotelReadDto>
             MapPagedResult(
                 PagedResult<Hotel> result)
@@ -359,6 +400,7 @@ namespace lab_01.Services.Implementations
                     result.TotalCount
             };
         }
+
 
         private static void EnsureOwner(
             Hotel hotel,
