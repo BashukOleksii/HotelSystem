@@ -127,6 +127,14 @@ else
 
                 <div class="card h-100 shadow-sm">
 
+                    @if (hotel.PhotoUrls.Count > 0)
+                    {
+                        <img src="@hotel.PhotoUrls[0]"
+                             alt="@hotel.Name"
+                             class="card-img-top"
+                             style="height:220px;object-fit:cover;" />
+                    }
+
                     <div class="card-body">
 
                         <h5 class="card-title">

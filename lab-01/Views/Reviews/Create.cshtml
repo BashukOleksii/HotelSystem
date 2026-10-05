@@ -32,7 +32,8 @@
 </div>
 
 
-<form method="post">
+<form method="post"
+      enctype="multipart/form-data">
 
     <input asp-for="Form.HotelId"
            type="hidden" />
@@ -90,6 +91,24 @@
 
     </div>
 
+    <div class="mb-4">
+
+    <label asp-for="Photos"
+           class="form-label">
+        Фотографії
+    </label>
+
+    <input asp-for="Photos"
+           type="file"
+           multiple
+           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+           class="form-control" />
+
+    <div class="form-text">
+        До 5 фотографій. Максимальний розмір одного файла — 5 МБ.
+    </div>
+
+</div>
 
     <button type="submit"
             class="btn btn-primary">

@@ -10,16 +10,31 @@ namespace lab_01.Validators.Review
         {
             RuleFor(x => x.HotelId)
                 .NotEmpty()
-                .WithMessage("Готель є обов'язковим.");
+                .WithMessage(
+                    "Готель є обов'язковим."
+                );
 
             RuleFor(x => x.Rating)
                 .InclusiveBetween(1, 5)
-                .WithMessage("Оцінка повинна бути від 1 до 5.");
+                .WithMessage(
+                    "Оцінка повинна бути від 1 до 5."
+                );
 
             RuleFor(x => x.Comment)
                 .MaximumLength(2000)
-                .WithMessage("Коментар не може перевищувати 2000 символів.")
-                .When(x => x.Comment is not null);
+                .WithMessage(
+                    "Коментар не може перевищувати 2000 символів."
+                )
+                .When(x =>
+                    x.Comment is not null
+                );
+
+            RuleFor(x => x.PhotoUrls)
+                .Must(urls =>
+                    urls.Count <= 5)
+                .WithMessage(
+                    "До відгуку можна додати не більше 5 фотографій."
+                );
         }
     }
 }

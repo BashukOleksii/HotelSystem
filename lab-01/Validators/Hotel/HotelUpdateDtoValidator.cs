@@ -10,29 +10,53 @@ namespace lab_01.Validators.Hotel
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage("Назва готелю не може бути порожньою.")
+                .WithMessage(
+                    "Назва готелю не може бути порожньою."
+                )
                 .MinimumLength(2)
                 .MaximumLength(100)
-                .When(x => x.Name is not null);
+                .When(x =>
+                    x.Name is not null
+                );
 
             RuleFor(x => x.Description)
                 .MaximumLength(2000)
-                .WithMessage("Опис готелю не може перевищувати 2000 символів.")
-                .When(x => x.Description is not null);
+                .WithMessage(
+                    "Опис готелю не може перевищувати 2000 символів."
+                )
+                .When(x =>
+                    x.Description is not null
+                );
 
-            When(x => x.Address is not null, () =>
-            {
-                RuleFor(x => x.Address!)
-                    .SetValidator(new AddressDtoValidator());
-            });
+            When(
+                x => x.Address is not null,
+                () =>
+                {
+                    RuleFor(x =>
+                            x.Address!)
+                        .SetValidator(
+                            new AddressDtoValidator()
+                        );
+                }
+            );
+
+            RuleFor(x => x.NewPhotoUrls)
+                .Must(urls =>
+                    urls.Count <= 10)
+                .WithMessage(
+                    "За один раз можна додати не більше 10 фотографій."
+                );
 
             RuleFor(x => x)
                 .Must(dto =>
                     dto.Name is not null ||
                     dto.Description is not null ||
-                    dto.Address is not null
+                    dto.Address is not null ||
+                    dto.NewPhotoUrls.Count > 0
                 )
-                .WithMessage("Потрібно вказати хоча б одне поле для оновлення.");
+                .WithMessage(
+                    "Потрібно вказати хоча б одне поле для оновлення."
+                );
         }
     }
 }

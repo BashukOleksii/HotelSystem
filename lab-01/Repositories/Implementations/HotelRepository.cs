@@ -7,103 +7,165 @@ using Microsoft.EntityFrameworkCore;
 
 namespace lab_01.Repositories.Implementations
 {
-
-        public class HotelRepository
-            : Repository<Hotel>, IHotelRepository
+    public class HotelRepository
+        : Repository<Hotel>,
+          IHotelRepository
+    {
+        public HotelRepository(
+            AppDbContext context)
+            : base(context)
         {
-            public HotelRepository(AppDbContext context)
-                : base(context)
-            {
-            }
+        }
 
-            public async Task<Hotel?> GetByIdWithDetailsAsync(string id)
-            {
-                return await _context.Hotels
-                    .AsNoTracking()
-                    .Include(h => h.Rooms)
-                    .Include(h => h.Reviews)
-                    .FirstOrDefaultAsync(h => h.Id == id);
-            }
+        public async Task<Hotel?>
+            GetByIdWithDetailsAsync(
+                string id)
+        {
+            return await _context.Hotels
+                .AsNoTracking()
+                .Include(hotel =>
+                    hotel.Photos)
+                .Include(hotel =>
+                    hotel.Rooms)
+                .Include(hotel =>
+                    hotel.Reviews)
+                .FirstOrDefaultAsync(
+                    hotel =>
+                        hotel.Id == id
+                );
+        }
 
-        public async Task<PagedResult<Hotel>> SearchAsync(
+        public async Task<PagedResult<Hotel>>
+            SearchAsync(
                 HotelQuery query)
+        {
+            IQueryable<Hotel> hotels =
+                _context.Hotels
+                    .AsNoTracking()
+                    .Include(hotel =>
+                        hotel.Photos);
+
+            if (!string.IsNullOrWhiteSpace(
+                query.Search))
             {
-                IQueryable<Hotel> hotels = _context.Hotels
-                    .AsNoTracking();
+                string search =
+                    query.Search.Trim();
 
-                if (!string.IsNullOrWhiteSpace(query.Search))
-                {
-                    string search = query.Search.Trim();
-
-                    hotels = hotels.Where(h =>
+                hotels =
+                    hotels.Where(hotel =>
                         EF.Functions.Like(
-                            h.Name,
+                            hotel.Name,
                             $"%{search}%"
                         )
                         ||
                         (
-                            h.Description != null &&
+                            hotel.Description != null &&
                             EF.Functions.Like(
-                                h.Description,
+                                hotel.Description,
                                 $"%{search}%"
                             )
                         )
                     );
-                }
+            }
 
-                if (!string.IsNullOrWhiteSpace(query.OwnerId))
-                {
-                    hotels = hotels.Where(
-                        h => h.OwnerId == query.OwnerId
+            if (!string.IsNullOrWhiteSpace(
+                query.OwnerId))
+            {
+                hotels =
+                    hotels.Where(
+                        hotel =>
+                            hotel.OwnerId ==
+                            query.OwnerId
                     );
-                }
+            }
 
-                if (!string.IsNullOrWhiteSpace(query.City))
-                {
-                    hotels = hotels.Where(
-                        h => h.Address.City == query.City
+            if (!string.IsNullOrWhiteSpace(
+                query.City))
+            {
+                hotels =
+                    hotels.Where(
+                        hotel =>
+                            hotel.Address.City ==
+                            query.City
                     );
-                }
+            }
 
-                int totalCount = await hotels.CountAsync();
+            int totalCount =
+                await hotels.CountAsync();
 
-                hotels = ApplySorting(hotels, query);
+            hotels =
+                ApplySorting(
+                    hotels,
+                    query
+                );
 
-                List<Hotel> items = await hotels
-                    .Skip((query.Page - 1) * query.PageSize)
-                    .Take(query.PageSize)
+            List<Hotel> items =
+                await hotels
+                    .Skip(
+                        (query.Page - 1) *
+                        query.PageSize
+                    )
+                    .Take(
+                        query.PageSize
+                    )
                     .ToListAsync();
 
-                return new PagedResult<Hotel>
-                {
-                    Items = items,
-                    Page = query.Page,
-                    PageSize = query.PageSize,
-                    TotalCount = totalCount
-                };
-            }
+            return new PagedResult<Hotel>
+            {
+                Items = items,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalCount = totalCount
+            };
+        }
 
-            private static IQueryable<Hotel> ApplySorting(
+        private static IQueryable<Hotel>
+            ApplySorting(
                 IQueryable<Hotel> hotels,
                 HotelQuery query)
+        {
+            return query.SortBy?.ToLower()
+                switch
             {
-                return query.SortBy?.ToLower() switch
-                {
-                    "name" => query.Descending
-                        ? hotels.OrderByDescending(h => h.Name)
-                        : hotels.OrderBy(h => h.Name),
+                "name" =>
+                    query.Descending
+                        ? hotels.OrderByDescending(
+                            hotel =>
+                                hotel.Name
+                        )
+                        : hotels.OrderBy(
+                            hotel =>
+                                hotel.Name
+                        ),
 
-                    "city" => query.Descending
-                        ? hotels.OrderByDescending(h => h.Address.City)
-                        : hotels.OrderBy(h => h.Address.City),
+                "city" =>
+                    query.Descending
+                        ? hotels.OrderByDescending(
+                            hotel =>
+                                hotel.Address.City
+                        )
+                        : hotels.OrderBy(
+                            hotel =>
+                                hotel.Address.City
+                        ),
 
-                    "createdat" => query.Descending
-                        ? hotels.OrderByDescending(h => h.CreatedAt)
-                        : hotels.OrderBy(h => h.CreatedAt),
+                "createdat" =>
+                    query.Descending
+                        ? hotels.OrderByDescending(
+                            hotel =>
+                                hotel.CreatedAt
+                        )
+                        : hotels.OrderBy(
+                            hotel =>
+                                hotel.CreatedAt
+                        ),
 
-                    _ => hotels.OrderBy(h => h.Name)
-                };
-            }
+                _ =>
+                    hotels.OrderBy(
+                        hotel =>
+                            hotel.Name
+                    )
+            };
         }
-    
+    }
 }

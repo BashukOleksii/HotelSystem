@@ -15,5 +15,8 @@ namespace lab_01.DTOs.Review
         public int Rating { get; set; }
 
         public string? Comment { get; set; }
+
+        public List<string> PhotoUrls { get; set; }
+            = [];
     }
 }

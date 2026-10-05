@@ -187,6 +187,20 @@ namespace lab_01.Services.Implementations
 
             review.UserId = userId;
 
+            foreach (string url in dto.PhotoUrls)
+            {
+                review.Photos.Add(
+                    new ReviewPhoto
+                    {
+                        ReviewId =
+                            review.Id,
+
+                        Url =
+                            url
+                    }
+                );
+            }
+
             await _reviewRepository.AddAsync(
                 review
             );
@@ -231,6 +245,20 @@ namespace lab_01.Services.Implementations
                 dto,
                 review
             );
+
+            foreach (string url in dto.NewPhotoUrls)
+            {
+                review.Photos.Add(
+                    new ReviewPhoto
+                    {
+                        ReviewId =
+                            review.Id,
+
+                        Url =
+                            url
+                    }
+                );
+            }
 
             _reviewRepository.Update(
                 review

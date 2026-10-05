@@ -60,6 +60,29 @@
 
 </dl>
 
+@if (Model.PhotoUrls.Count > 0)
+{
+    <h4 class="mt-4">
+        Фотографії
+    </h4>
+
+    <div class="row g-3 mb-4">
+
+        @foreach (string photo
+            in Model.PhotoUrls)
+        {
+            <div class="col-md-4">
+
+                <img src="@photo"
+                     alt="Фото відгуку"
+                     class="img-fluid rounded shadow-sm"
+                     style="height:220px;width:100%;object-fit:cover;" />
+
+            </div>
+        }
+
+    </div>
+}
 
 <a asp-action="Edit"
    asp-route-id="@Model.Id"

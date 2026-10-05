@@ -66,6 +66,25 @@
 
 <hr />
 
+@if (Model.PhotoUrls.Count > 0)
+{
+    <div class="row g-3 mb-4">
+
+        @foreach (string photo
+            in Model.PhotoUrls)
+        {
+            <div class="col-md-4">
+
+                <img src="@photo"
+                     alt="@Model.Name"
+                     class="img-fluid rounded shadow-sm"
+                     style="width:100%;height:250px;object-fit:cover;" />
+
+            </div>
+        }
+
+    </div>
+}
 
 <h4>
     Адреса

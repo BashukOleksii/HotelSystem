@@ -17,14 +17,16 @@ namespace lab_01.Repositories.Implementations
         }
 
         public async Task<Review?> GetByIdWithDetailsAsync(
-            string id)
+     string id)
         {
             return await _context.Reviews
                 .AsNoTracking()
                 .Include(review => review.User)
                 .Include(review => review.Hotel)
+                .Include(review => review.Photos)
                 .FirstOrDefaultAsync(
-                    review => review.Id == id
+                    review =>
+                        review.Id == id
                 );
         }
 
@@ -35,7 +37,9 @@ namespace lab_01.Repositories.Implementations
                 _context.Reviews
                     .AsNoTracking()
                     .Include(review => review.User)
-                    .Include(review => review.Hotel);
+                    .Include(review => review.Hotel)
+                    .Include(review => review.Photos);
+
 
             if (!string.IsNullOrWhiteSpace(
                 query.Search))

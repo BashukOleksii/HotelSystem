@@ -1,16 +1,16 @@
-﻿using lab_01.DTOs.Review;
+﻿using lab_01.DTOs.Hotel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
-namespace lab_01.ViewModels.Reviews
+namespace lab_01.ViewModels.Hotels
 {
-    public class ReviewEditViewModel
+    public class HotelEditViewModel
     {
         [ValidateNever]
-        public ReviewReadDto Review { get; set; }
+        public HotelReadDto Hotel { get; set; }
             = null!;
 
-        public ReviewUpdateDto Form { get; set; }
+        public HotelUpdateDto Form { get; set; }
             = new();
 
         [ValidateNever]

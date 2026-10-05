@@ -23,8 +23,28 @@
 
 </div>
 
+@if (Model.Review.PhotoUrls.Count > 0)
+{
+    <div class="row g-3 mb-4">
+
+        @foreach (string photo
+            in Model.Review.PhotoUrls)
+        {
+            <div class="col-md-3">
+
+                <img src="@photo"
+                     alt="Фото відгуку"
+                     class="img-fluid rounded"
+                     style="height:170px;width:100%;object-fit:cover;" />
+
+            </div>
+        }
+
+    </div>
+}
 
 <form method="post"
+      enctype="multipart/form-data"
       asp-action="Edit"
       asp-route-id="@Model.Review.Id">
 
@@ -73,6 +93,20 @@
 
     </div>
 
+    <div class="mb-4">
+
+    <label asp-for="NewPhotos"
+           class="form-label">
+        Додати фотографії
+    </label>
+
+    <input asp-for="NewPhotos"
+           type="file"
+           multiple
+           accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+           class="form-control" />
+
+</div>
 
     <button type="submit"
             class="btn btn-primary">

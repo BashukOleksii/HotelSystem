@@ -15,16 +15,21 @@ namespace lab_01.Controllers
     {
         private readonly IReviewService _reviewService;
         private readonly IHotelService _hotelService;
+        private readonly IImageStorageService _imageStorageService;
 
         public ReviewsController(
             IReviewService reviewService,
-            IHotelService hotelService)
+            IHotelService hotelService,
+            IImageStorageService imageStorageService)
         {
             _reviewService =
                 reviewService;
 
             _hotelService =
                 hotelService;
+
+            _imageStorageService =
+                imageStorageService;
         }
 
         [HttpGet]
@@ -66,14 +71,13 @@ namespace lab_01.Controllers
             string userId =
                 GetCurrentUserId();
 
-            ReviewReadDto review =
+            return View(
                 await _reviewService
                     .GetUserReviewByIdAsync(
                         id,
                         userId
-                    );
-
-            return View(review);
+                    )
+            );
         }
 
         [HttpGet]
@@ -85,7 +89,7 @@ namespace lab_01.Controllers
                     hotelId
                 );
 
-            ReviewCreateViewModel model =
+            return View(
                 new ReviewCreateViewModel
                 {
                     Hotel = hotel,
@@ -93,12 +97,14 @@ namespace lab_01.Controllers
                     Form =
                         new ReviewCreateDto
                         {
-                            HotelId = hotelId,
-                            Rating = 5
-                        }
-                };
+                            HotelId =
+                                hotelId,
 
-            return View(model);
+                            Rating =
+                                5
+                        }
+                }
+            );
         }
 
         [HttpPost]
@@ -106,8 +112,22 @@ namespace lab_01.Controllers
         public async Task<IActionResult> Create(
             ReviewCreateViewModel model)
         {
+            IReadOnlyList<string> savedPhotos =
+                [];
+
             try
             {
+                savedPhotos =
+                    await _imageStorageService
+                        .SaveImagesAsync(
+                            model.Photos,
+                            "reviews",
+                            5
+                        );
+
+                model.Form.PhotoUrls =
+                    savedPhotos.ToList();
+
                 string userId =
                     GetCurrentUserId();
 
@@ -130,6 +150,11 @@ namespace lab_01.Controllers
             }
             catch (ValidationException exception)
             {
+                await _imageStorageService
+                    .DeleteImagesAsync(
+                        savedPhotos
+                    );
+
                 AddValidationErrors(
                     exception,
                     "Form"
@@ -137,8 +162,25 @@ namespace lab_01.Controllers
             }
             catch (ConflictException exception)
             {
+                await _imageStorageService
+                    .DeleteImagesAsync(
+                        savedPhotos
+                    );
+
                 ModelState.AddModelError(
                     string.Empty,
+                    exception.Message
+                );
+            }
+            catch (ArgumentException exception)
+            {
+                await _imageStorageService
+                    .DeleteImagesAsync(
+                        savedPhotos
+                    );
+
+                ModelState.AddModelError(
+                    nameof(model.Photos),
                     exception.Message
                 );
             }
@@ -165,7 +207,7 @@ namespace lab_01.Controllers
                         userId
                     );
 
-            ReviewEditViewModel model =
+            return View(
                 new ReviewEditViewModel
                 {
                     Review = review,
@@ -179,9 +221,8 @@ namespace lab_01.Controllers
                             Comment =
                                 review.Comment
                         }
-                };
-
-            return View(model);
+                }
+            );
         }
 
         [HttpPost]
@@ -193,8 +234,22 @@ namespace lab_01.Controllers
             string userId =
                 GetCurrentUserId();
 
+            IReadOnlyList<string> savedPhotos =
+                [];
+
             try
             {
+                savedPhotos =
+                    await _imageStorageService
+                        .SaveImagesAsync(
+                            model.NewPhotos,
+                            "reviews",
+                            5
+                        );
+
+                model.Form.NewPhotoUrls =
+                    savedPhotos.ToList();
+
                 await _reviewService.UpdateAsync(
                     id,
                     userId,
@@ -214,9 +269,26 @@ namespace lab_01.Controllers
             }
             catch (ValidationException exception)
             {
+                await _imageStorageService
+                    .DeleteImagesAsync(
+                        savedPhotos
+                    );
+
                 AddValidationErrors(
                     exception,
                     "Form"
+                );
+            }
+            catch (ArgumentException exception)
+            {
+                await _imageStorageService
+                    .DeleteImagesAsync(
+                        savedPhotos
+                    );
+
+                ModelState.AddModelError(
+                    nameof(model.NewPhotos),
+                    exception.Message
                 );
             }
 
@@ -237,14 +309,13 @@ namespace lab_01.Controllers
             string userId =
                 GetCurrentUserId();
 
-            ReviewReadDto review =
+            return View(
                 await _reviewService
                     .GetUserReviewByIdAsync(
                         id,
                         userId
-                    );
-
-            return View(review);
+                    )
+            );
         }
 
         [HttpPost]
@@ -257,10 +328,22 @@ namespace lab_01.Controllers
             string userId =
                 GetCurrentUserId();
 
+            ReviewReadDto review =
+                await _reviewService
+                    .GetUserReviewByIdAsync(
+                        id,
+                        userId
+                    );
+
             await _reviewService.DeleteAsync(
                 id,
                 userId
             );
+
+            await _imageStorageService
+                .DeleteImagesAsync(
+                    review.PhotoUrls
+                );
 
             TempData["Success"] =
                 "Відгук видалено.";
@@ -292,26 +375,17 @@ namespace lab_01.Controllers
             ValidationException exception,
             string? prefix = null)
         {
-            foreach (var error in exception.Errors)
+            foreach (var error
+                in exception.Errors)
             {
-                string key;
-
-                if (string.IsNullOrWhiteSpace(
-                    error.PropertyName))
-                {
-                    key = string.Empty;
-                }
-                else if (string.IsNullOrWhiteSpace(
-                    prefix))
-                {
-                    key =
-                        error.PropertyName;
-                }
-                else
-                {
-                    key =
-                        $"{prefix}.{error.PropertyName}";
-                }
+                string key =
+                    string.IsNullOrWhiteSpace(
+                        error.PropertyName)
+                        ? string.Empty
+                        : string.IsNullOrWhiteSpace(
+                            prefix)
+                            ? error.PropertyName
+                            : $"{prefix}.{error.PropertyName}";
 
                 ModelState.AddModelError(
                     key,

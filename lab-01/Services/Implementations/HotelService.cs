@@ -26,19 +26,30 @@ namespace lab_01.Services.Implementations
             IValidator<HotelUpdateDto> updateValidator,
             IValidator<HotelQuery> queryValidator)
         {
-            _hotelRepository = hotelRepository;
-            _mapper = mapper;
+            _hotelRepository =
+                hotelRepository;
 
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
-            _queryValidator = queryValidator;
+            _mapper =
+                mapper;
+
+            _createValidator =
+                createValidator;
+
+            _updateValidator =
+                updateValidator;
+
+            _queryValidator =
+                queryValidator;
         }
 
         public async Task<HotelReadDto> GetByIdAsync(
             string id)
         {
             Hotel? hotel =
-                await _hotelRepository.GetByIdAsync(id);
+                await _hotelRepository
+                    .GetByIdWithDetailsAsync(
+                        id
+                    );
 
             if (hotel is null)
             {
@@ -48,33 +59,21 @@ namespace lab_01.Services.Implementations
                 );
             }
 
-            return _mapper.Map<HotelReadDto>(hotel);
+            return _mapper.Map<HotelReadDto>(
+                hotel
+            );
         }
 
-        private static HotelQuery CreateQuery(
-            HotelFilterDto filter,
-            string? ownerId = null)
-        {
-            return new HotelQuery
-            {
-                Search = filter.Search,
-                City = filter.City,
-                SortBy = filter.SortBy,
-                Descending = filter.Descending,
-                Page = filter.Page,
-                PageSize = filter.PageSize,
-                OwnerId = ownerId
-            };
-        }
-
-        public async Task<HotelReadDto> GetOwnerHotelByIdAsync(
-            string id,
-            string ownerId)
+        public async Task<HotelReadDto>
+            GetOwnerHotelByIdAsync(
+                string id,
+                string ownerId)
         {
             Hotel? hotel =
-                await _hotelRepository.GetByIdAsync(
-                    id
-                );
+                await _hotelRepository
+                    .GetByIdWithDetailsAsync(
+                        id
+                    );
 
             if (hotel is null)
             {
@@ -95,29 +94,36 @@ namespace lab_01.Services.Implementations
         }
 
         public async Task<PagedResult<HotelReadDto>>
-        SearchAsync(
-            HotelFilterDto filter)
+            SearchAsync(
+                HotelFilterDto filter)
         {
             HotelQuery query =
-                CreateQuery(filter);
+                CreateQuery(
+                    filter
+                );
 
             await _queryValidator
-                .ValidateAndThrowAsync(query);
+                .ValidateAndThrowAsync(
+                    query
+                );
 
             PagedResult<Hotel> result =
                 await _hotelRepository.SearchAsync(
                     query
                 );
 
-            return MapPagedResult(result);
+            return MapPagedResult(
+                result
+            );
         }
 
         public async Task<PagedResult<HotelReadDto>>
-        SearchOwnerHotelsAsync(
-            string ownerId,
-            HotelFilterDto filter)
+            SearchOwnerHotelsAsync(
+                string ownerId,
+                HotelFilterDto filter)
         {
-            if (string.IsNullOrWhiteSpace(ownerId))
+            if (string.IsNullOrWhiteSpace(
+                ownerId))
             {
                 throw new ArgumentException(
                     "OwnerId не може бути порожнім.",
@@ -132,21 +138,26 @@ namespace lab_01.Services.Implementations
                 );
 
             await _queryValidator
-                .ValidateAndThrowAsync(query);
+                .ValidateAndThrowAsync(
+                    query
+                );
 
             PagedResult<Hotel> result =
                 await _hotelRepository.SearchAsync(
                     query
                 );
 
-            return MapPagedResult(result);
+            return MapPagedResult(
+                result
+            );
         }
 
         public async Task<HotelReadDto> CreateAsync(
             string ownerId,
             HotelCreateDto dto)
         {
-            if (string.IsNullOrWhiteSpace(ownerId))
+            if (string.IsNullOrWhiteSpace(
+                ownerId))
             {
                 throw new ArgumentException(
                     "OwnerId не може бути порожнім.",
@@ -155,12 +166,32 @@ namespace lab_01.Services.Implementations
             }
 
             await _createValidator
-                .ValidateAndThrowAsync(dto);
+                .ValidateAndThrowAsync(
+                    dto
+                );
 
             Hotel hotel =
-                _mapper.Map<Hotel>(dto);
+                _mapper.Map<Hotel>(
+                    dto
+                );
 
-            hotel.OwnerId = ownerId;
+            hotel.OwnerId =
+                ownerId;
+
+            foreach (string url
+                in dto.PhotoUrls)
+            {
+                hotel.Photos.Add(
+                    new HotelPhoto
+                    {
+                        HotelId =
+                            hotel.Id,
+
+                        Url =
+                            url
+                    }
+                );
+            }
 
             await _hotelRepository.AddAsync(
                 hotel
@@ -174,28 +205,15 @@ namespace lab_01.Services.Implementations
             );
         }
 
-        private PagedResult<HotelReadDto> MapPagedResult(
-            PagedResult<Hotel> result)
-        {
-            return new PagedResult<HotelReadDto>
-            {
-                Items = _mapper.Map<IReadOnlyList<HotelReadDto>>(
-                    result.Items
-                ),
-
-                Page = result.Page,
-                PageSize = result.PageSize,
-                TotalCount = result.TotalCount
-            };
-        }
-
         public async Task<HotelReadDto> UpdateAsync(
             string id,
             string ownerId,
             HotelUpdateDto dto)
         {
             await _updateValidator
-                .ValidateAndThrowAsync(dto);
+                .ValidateAndThrowAsync(
+                    dto
+                );
 
             Hotel? hotel =
                 await _hotelRepository.GetByIdAsync(
@@ -220,6 +238,21 @@ namespace lab_01.Services.Implementations
                 hotel
             );
 
+            foreach (string url
+                in dto.NewPhotoUrls)
+            {
+                hotel.Photos.Add(
+                    new HotelPhoto
+                    {
+                        HotelId =
+                            hotel.Id,
+
+                        Url =
+                            url
+                    }
+                );
+            }
+
             _hotelRepository.Update(
                 hotel
             );
@@ -227,8 +260,22 @@ namespace lab_01.Services.Implementations
             await _hotelRepository
                 .SaveChangesAsync();
 
+            Hotel? updatedHotel =
+                await _hotelRepository
+                    .GetByIdWithDetailsAsync(
+                        id
+                    );
+
+            if (updatedHotel is null)
+            {
+                throw new NotFoundException(
+                    nameof(Hotel),
+                    id
+                );
+            }
+
             return _mapper.Map<HotelReadDto>(
-                hotel
+                updatedHotel
             );
         }
 
@@ -262,6 +309,57 @@ namespace lab_01.Services.Implementations
                 .SaveChangesAsync();
         }
 
+        private static HotelQuery CreateQuery(
+            HotelFilterDto filter,
+            string? ownerId = null)
+        {
+            return new HotelQuery
+            {
+                Search =
+                    filter.Search,
+
+                City =
+                    filter.City,
+
+                SortBy =
+                    filter.SortBy,
+
+                Descending =
+                    filter.Descending,
+
+                Page =
+                    filter.Page,
+
+                PageSize =
+                    filter.PageSize,
+
+                OwnerId =
+                    ownerId
+            };
+        }
+
+        private PagedResult<HotelReadDto>
+            MapPagedResult(
+                PagedResult<Hotel> result)
+        {
+            return new PagedResult<HotelReadDto>
+            {
+                Items =
+                    _mapper.Map<
+                        IReadOnlyList<HotelReadDto>
+                    >(result.Items),
+
+                Page =
+                    result.Page,
+
+                PageSize =
+                    result.PageSize,
+
+                TotalCount =
+                    result.TotalCount
+            };
+        }
+
         private static void EnsureOwner(
             Hotel hotel,
             string ownerId)
@@ -273,6 +371,5 @@ namespace lab_01.Services.Implementations
                 );
             }
         }
-
     }
 }

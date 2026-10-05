@@ -12,12 +12,17 @@ namespace lab_01.Areas.Admin.Controllers
     public class ReviewsController : Controller
     {
         private readonly IReviewService _reviewService;
+        private readonly IImageStorageService _imageStorageService;
 
         public ReviewsController(
-            IReviewService reviewService)
+            IReviewService reviewService,
+            IImageStorageService imageStorageService)
         {
             _reviewService =
                 reviewService;
+
+            _imageStorageService =
+                imageStorageService;
         }
 
         [HttpGet]
@@ -75,12 +80,22 @@ namespace lab_01.Areas.Admin.Controllers
         [ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult>
-            DeleteConfirmed(
-                string id)
+    DeleteConfirmed(
+        string id)
         {
+            ReviewReadDto review =
+                await _reviewService.GetByIdAsync(
+                    id
+                );
+
             await _reviewService
                 .DeleteAsAdminAsync(
                     id
+                );
+
+            await _imageStorageService
+                .DeleteImagesAsync(
+                    review.PhotoUrls
                 );
 
             TempData["Success"] =

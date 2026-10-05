@@ -1,7 +1,8 @@
-﻿@model HotelUpdateDto
+﻿@model HotelEditViewModel
 
 @{
-    ViewData["Title"] = "Редагування готелю";
+    ViewData["Title"] =
+        "Редагування готелю";
 }
 
 
@@ -10,42 +11,56 @@
 </h1>
 
 
-<form method="post">
+@if (Model.Hotel.PhotoUrls.Count > 0)
+{
+    <div class="row g-3 mb-4">
 
-    <div asp-validation-summary="ModelOnly"
+        @foreach (string photo
+            in Model.Hotel.PhotoUrls)
+        {
+            <div class="col-md-3">
+
+                <img src="@photo"
+                     alt="@Model.Hotel.Name"
+                     class="img-fluid rounded"
+                     style="height:180px;width:100%;object-fit:cover;" />
+
+            </div>
+        }
+
+    </div>
+}
+
+
+<form method="post"
+      enctype="multipart/form-data">
+
+    <div asp-validation-summary="All"
          class="text-danger mb-3">
     </div>
 
 
     <div class="mb-3">
 
-        <label asp-for="Name"
+        <label asp-for="Form.Name"
                class="form-label">
-
             Назва
-
         </label>
 
-        <input asp-for="Name"
+        <input asp-for="Form.Name"
                class="form-control" />
-
-        <span asp-validation-for="Name"
-              class="text-danger">
-        </span>
 
     </div>
 
 
     <div class="mb-3">
 
-        <label asp-for="Description"
+        <label asp-for="Form.Description"
                class="form-label">
-
             Опис
-
         </label>
 
-        <textarea asp-for="Description"
+        <textarea asp-for="Form.Description"
                   class="form-control"
                   rows="4">
         </textarea>
@@ -62,12 +77,12 @@
 
         <div class="col-md-4 mb-3">
 
-            <label asp-for="Address.City"
+            <label asp-for="Form.Address.City"
                    class="form-label">
                 Місто
             </label>
 
-            <input asp-for="Address.City"
+            <input asp-for="Form.Address.City"
                    class="form-control" />
 
         </div>
@@ -75,12 +90,12 @@
 
         <div class="col-md-5 mb-3">
 
-            <label asp-for="Address.Street"
+            <label asp-for="Form.Address.Street"
                    class="form-label">
                 Вулиця
             </label>
 
-            <input asp-for="Address.Street"
+            <input asp-for="Form.Address.Street"
                    class="form-control" />
 
         </div>
@@ -88,12 +103,12 @@
 
         <div class="col-md-3 mb-3">
 
-            <label asp-for="Address.Number"
+            <label asp-for="Form.Address.Number"
                    class="form-label">
                 Номер
             </label>
 
-            <input asp-for="Address.Number"
+            <input asp-for="Form.Address.Number"
                    class="form-control" />
 
         </div>
@@ -101,19 +116,31 @@
     </div>
 
 
+    <div class="mb-4">
+
+        <label asp-for="NewPhotos"
+               class="form-label">
+            Додати фотографії
+        </label>
+
+        <input asp-for="NewPhotos"
+               type="file"
+               multiple
+               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+               class="form-control" />
+
+    </div>
+
+
     <button type="submit"
             class="btn btn-primary">
-
         Зберегти
-
     </button>
 
-
-    <a asp-action="Index"
+    <a asp-action="Details"
+       asp-route-id="@Model.Hotel.Id"
        class="btn btn-secondary">
-
         Скасувати
-
     </a>
 
 </form>
