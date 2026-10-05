@@ -1,0 +1,123 @@
+﻿@model AdminUserCreateViewModel
+
+@{
+    ViewData["Title"] =
+        "Новий користувач";
+}
+
+
+<h1 class="mb-4">
+    Новий користувач
+</h1>
+
+
+<form method="post">
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3">
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.UserName"
+               class="form-label">
+            Username
+        </label>
+
+        <input asp-for="Form.UserName"
+               class="form-control" />
+
+        <span asp-validation-for="Form.UserName"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.Email"
+               class="form-label">
+            Email
+        </label>
+
+        <input asp-for="Form.Email"
+               class="form-control" />
+
+        <span asp-validation-for="Form.Email"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.PhoneNumber"
+               class="form-label">
+            Телефон
+        </label>
+
+        <input asp-for="Form.PhoneNumber"
+               class="form-control" />
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="Form.Password"
+               class="form-label">
+            Пароль
+        </label>
+
+        <input asp-for="Form.Password"
+               type="password"
+               class="form-control" />
+
+        <span asp-validation-for="Form.Password"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <div class="mb-3">
+
+        <label asp-for="SelectedRole"
+               class="form-label">
+            Роль
+        </label>
+
+        <select asp-for="SelectedRole"
+                class="form-select">
+
+            @foreach (string role in Model.Roles)
+            {
+                <option value="@role">
+                    @role
+                </option>
+            }
+
+        </select>
+
+        <span asp-validation-for="SelectedRole"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <button type="submit"
+            class="btn btn-primary">
+        Створити
+    </button>
+
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Назад
+    </a>
+
+</form>

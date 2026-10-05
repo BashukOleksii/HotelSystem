@@ -42,5 +42,9 @@ namespace lab_01.Services.Interfaces
             string id,
             string userId
         );
+
+        Task DeleteAsAdminAsync(
+            string id
+        );
     }
 }

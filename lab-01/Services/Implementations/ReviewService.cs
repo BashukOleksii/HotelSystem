@@ -28,23 +28,13 @@ namespace lab_01.Services.Implementations
             IValidator<ReviewUpdateDto> updateValidator,
             IValidator<ReviewQuery> queryValidator)
         {
-            _reviewRepository =
-                reviewRepository;
+            _reviewRepository = reviewRepository;
+            _hotelRepository = hotelRepository;
+            _mapper = mapper;
 
-            _hotelRepository =
-                hotelRepository;
-
-            _mapper =
-                mapper;
-
-            _createValidator =
-                createValidator;
-
-            _updateValidator =
-                updateValidator;
-
-            _queryValidator =
-                queryValidator;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
+            _queryValidator = queryValidator;
         }
 
         public async Task<ReviewReadDto> GetByIdAsync(
@@ -195,8 +185,7 @@ namespace lab_01.Services.Implementations
                     dto
                 );
 
-            review.UserId =
-                userId;
+            review.UserId = userId;
 
             await _reviewRepository.AddAsync(
                 review
@@ -285,6 +274,30 @@ namespace lab_01.Services.Implementations
                 .SaveChangesAsync();
         }
 
+        public async Task DeleteAsAdminAsync(
+            string id)
+        {
+            Review? review =
+                await _reviewRepository.GetByIdAsync(
+                    id
+                );
+
+            if (review is null)
+            {
+                throw new NotFoundException(
+                    nameof(Review),
+                    id
+                );
+            }
+
+            _reviewRepository.Delete(
+                review
+            );
+
+            await _reviewRepository
+                .SaveChangesAsync();
+        }
+
         private async Task<ReviewReadDto>
             GetDetailedReviewAsync(
                 string id)
@@ -314,32 +327,15 @@ namespace lab_01.Services.Implementations
         {
             return new ReviewQuery
             {
-                Search =
-                    filter.Search,
-
-                HotelId =
-                    filter.HotelId,
-
-                UserId =
-                    userId,
-
-                MinRating =
-                    filter.MinRating,
-
-                MaxRating =
-                    filter.MaxRating,
-
-                SortBy =
-                    filter.SortBy,
-
-                Descending =
-                    filter.Descending,
-
-                Page =
-                    filter.Page,
-
-                PageSize =
-                    filter.PageSize
+                Search = filter.Search,
+                HotelId = filter.HotelId,
+                UserId = userId,
+                MinRating = filter.MinRating,
+                MaxRating = filter.MaxRating,
+                SortBy = filter.SortBy,
+                Descending = filter.Descending,
+                Page = filter.Page,
+                PageSize = filter.PageSize
             };
         }
 
@@ -354,14 +350,9 @@ namespace lab_01.Services.Implementations
                         IReadOnlyList<ReviewReadDto>
                     >(result.Items),
 
-                Page =
-                    result.Page,
-
-                PageSize =
-                    result.PageSize,
-
-                TotalCount =
-                    result.TotalCount
+                Page = result.Page,
+                PageSize = result.PageSize,
+                TotalCount = result.TotalCount
             };
         }
 

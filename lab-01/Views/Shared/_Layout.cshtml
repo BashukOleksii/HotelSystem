@@ -59,10 +59,8 @@
             <div class="collapse navbar-collapse"
                  id="mainNavbar">
 
-
                 <ul class="navbar-nav me-auto
                            mb-2 mb-lg-0">
-
 
                     <li class="nav-item">
 
@@ -123,7 +121,6 @@
 
                         </li>
 
-
                         <li class="nav-item">
 
                             <a class="nav-link"
@@ -138,12 +135,41 @@
                         </li>
                     }
 
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-area="Admin"
+                               asp-controller="Users"
+                               asp-action="Index">
+
+                                Користувачі
+
+                            </a>
+
+                        </li>
+
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-area="Admin"
+                               asp-controller="Reviews"
+                               asp-action="Index">
+
+                                Модерація відгуків
+
+                            </a>
+
+                        </li>
+                    }
+
                 </ul>
 
 
                 <ul class="navbar-nav
                            align-items-lg-center">
-
 
                     @if (
                         User.Identity?.IsAuthenticated
@@ -159,7 +185,6 @@
                             </span>
 
                         </li>
-
 
                         <li class="nav-item">
 
@@ -195,7 +220,6 @@
                             </a>
 
                         </li>
-
 
                         <li class="nav-item">
 

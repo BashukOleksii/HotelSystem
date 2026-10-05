@@ -1,0 +1,65 @@
+﻿@model UserReadDto
+
+@{
+    ViewData["Title"] =
+        "Видалення користувача";
+}
+
+
+<h1 class="mb-4">
+    Видалення користувача
+</h1>
+
+
+<div asp-validation-summary="All"
+     class="text-danger mb-3">
+</div>
+
+
+<div class="alert alert-warning">
+
+    Ви впевнені, що хочете видалити
+    користувача
+    <strong>@Model.UserName</strong>?
+
+</div>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Email
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.Email
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Роль
+    </dt>
+
+    <dd class="col-sm-9">
+        @string.Join(", ", Model.Roles)
+    </dd>
+
+</dl>
+
+
+<form method="post"
+      asp-action="Delete"
+      asp-route-id="@Model.Id">
+
+    <button type="submit"
+            class="btn btn-danger">
+        Видалити
+    </button>
+
+    <a asp-action="Details"
+       asp-route-id="@Model.Id"
+       class="btn btn-secondary">
+        Скасувати
+    </a>
+
+</form>
