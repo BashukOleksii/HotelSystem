@@ -30,9 +30,10 @@ namespace lab_01.Repositories.Implementations
             BookingQuery query)
         {
             IQueryable<Booking> bookings = _context.Bookings
-                .AsNoTracking()
-                .Include(b => b.Room)
-                    .ThenInclude(r => r.Hotel);
+            .AsNoTracking()
+            .Include(b => b.User)
+            .Include(b => b.Room)
+                .ThenInclude(r => r.Hotel);
 
             if (!string.IsNullOrWhiteSpace(query.UserId))
             {
