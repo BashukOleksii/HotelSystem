@@ -1,0 +1,91 @@
+﻿@model BookingReadDto
+
+@{
+    ViewData["Title"] =
+        "Скасування бронювання";
+}
+
+
+<h1 class="mb-4">
+    Скасування бронювання
+</h1>
+
+
+<div class="alert alert-warning">
+
+    Ви впевнені, що хочете
+    скасувати це бронювання?
+
+</div>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Готель
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.HotelName
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Кімната
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.RoomNumber
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Заселення
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CheckIn.ToString("dd.MM.yyyy")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Виселення
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CheckOut.ToString("dd.MM.yyyy")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Вартість
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.TotalPrice.ToString("0.00")
+    </dd>
+
+</dl>
+
+
+<form method="post"
+      asp-action="Cancel"
+      asp-route-id="@Model.Id">
+
+    <button type="submit"
+            class="btn btn-danger">
+
+        Так, скасувати
+
+    </button>
+
+
+    <a asp-action="Details"
+       asp-route-id="@Model.Id"
+       class="btn btn-secondary">
+
+        Назад
+
+    </a>
+
+</form>

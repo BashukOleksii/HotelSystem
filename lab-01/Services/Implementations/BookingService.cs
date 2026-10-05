@@ -47,11 +47,21 @@ namespace lab_01.Services.Implementations
                     .GetByIdWithDetailsAsync(id);
 
             if (booking is null)
-                throw new NotFoundException(nameof(Booking), id);
+            {
+                throw new NotFoundException(
+                    nameof(Booking),
+                    id
+                );
+            }
 
-            EnsureUserBooking(booking, userId);
+            EnsureUserBooking(
+                booking,
+                userId
+            );
 
-            return _mapper.Map<BookingReadDto>(booking);
+            return _mapper.Map<BookingReadDto>(
+                booking
+            );
         }
 
         public async Task<BookingReadDto>
@@ -64,11 +74,21 @@ namespace lab_01.Services.Implementations
                     .GetByIdWithDetailsAsync(id);
 
             if (booking is null)
-                throw new NotFoundException(nameof(Booking), id);
+            {
+                throw new NotFoundException(
+                    nameof(Booking),
+                    id
+                );
+            }
 
-            EnsureOwnerBooking(booking, ownerId);
+            EnsureOwnerBooking(
+                booking,
+                ownerId
+            );
 
-            return _mapper.Map<BookingReadDto>(booking);
+            return _mapper.Map<BookingReadDto>(
+                booking
+            );
         }
 
         public async Task<PagedResult<BookingReadDto>>
@@ -86,9 +106,12 @@ namespace lab_01.Services.Implementations
                 .ValidateAndThrowAsync(query);
 
             PagedResult<Booking> result =
-                await _bookingRepository.SearchAsync(query);
+                await _bookingRepository
+                    .SearchAsync(query);
 
-            return MapPagedResult(result);
+            return MapPagedResult(
+                result
+            );
         }
 
         public async Task<PagedResult<BookingReadDto>>
@@ -106,9 +129,12 @@ namespace lab_01.Services.Implementations
                 .ValidateAndThrowAsync(query);
 
             PagedResult<Booking> result =
-                await _bookingRepository.SearchAsync(query);
+                await _bookingRepository
+                    .SearchAsync(query);
 
-            return MapPagedResult(result);
+            return MapPagedResult(
+                result
+            );
         }
 
         public async Task<BookingReadDto> CreateAsync(
@@ -124,10 +150,12 @@ namespace lab_01.Services.Implementations
                 );
 
             if (room is null)
+            {
                 throw new NotFoundException(
                     nameof(Room),
                     dto.RoomId
                 );
+            }
 
             if (!room.IsAvailable)
             {
@@ -136,25 +164,39 @@ namespace lab_01.Services.Implementations
                 );
             }
 
-            DateTime checkIn = dto.CheckIn.Date;
-            DateTime checkOut = dto.CheckOut.Date;
+            DateTime checkIn =
+                dto.CheckIn.Date;
+
+            DateTime checkOut =
+                dto.CheckOut.Date;
 
             bool hasConflict =
-                await _bookingRepository.HasConflictAsync(
-                    room.Id,
-                    checkIn,
-                    checkOut
-                );
+                await _bookingRepository
+                    .HasConflictAsync(
+                        room.Id,
+                        checkIn,
+                        checkOut
+                    );
 
             if (hasConflict)
+            {
                 throw new BookingConflictException();
+            }
 
             Booking booking =
-                _mapper.Map<Booking>(dto);
+                _mapper.Map<Booking>(
+                    dto
+                );
 
-            booking.UserId = userId;
-            booking.CheckIn = checkIn;
-            booking.CheckOut = checkOut;
+            booking.UserId =
+                userId;
+
+            booking.CheckIn =
+                checkIn;
+
+            booking.CheckOut =
+                checkOut;
+
             booking.TotalPrice =
                 CalculateTotalPrice(
                     room,
@@ -169,8 +211,8 @@ namespace lab_01.Services.Implementations
             await _bookingRepository
                 .SaveChangesAsync();
 
-            return _mapper.Map<BookingReadDto>(
-                booking
+            return await GetDetailedBookingDtoAsync(
+                booking.Id
             );
         }
 
@@ -188,10 +230,12 @@ namespace lab_01.Services.Implementations
                 );
 
             if (booking is null)
+            {
                 throw new NotFoundException(
                     nameof(Booking),
                     id
                 );
+            }
 
             EnsureUserBooking(
                 booking,
@@ -204,10 +248,12 @@ namespace lab_01.Services.Implementations
                 );
 
             if (room is null)
+            {
                 throw new NotFoundException(
                     nameof(Room),
                     booking.RoomId
                 );
+            }
 
             if (!room.IsAvailable)
             {
@@ -227,9 +273,14 @@ namespace lab_01.Services.Implementations
             BookingCreateDto effectiveBooking =
                 new BookingCreateDto
                 {
-                    RoomId = booking.RoomId,
-                    CheckIn = checkIn,
-                    CheckOut = checkOut
+                    RoomId =
+                        booking.RoomId,
+
+                    CheckIn =
+                        checkIn,
+
+                    CheckOut =
+                        checkOut
                 };
 
             await _createValidator
@@ -238,23 +289,30 @@ namespace lab_01.Services.Implementations
                 );
 
             bool hasConflict =
-                await _bookingRepository.HasConflictAsync(
-                    room.Id,
-                    checkIn,
-                    checkOut,
-                    booking.Id
-                );
+                await _bookingRepository
+                    .HasConflictAsync(
+                        room.Id,
+                        checkIn,
+                        checkOut,
+                        booking.Id
+                    );
 
             if (hasConflict)
+            {
                 throw new BookingConflictException();
+            }
 
             _mapper.Map(
                 dto,
                 booking
             );
 
-            booking.CheckIn = checkIn;
-            booking.CheckOut = checkOut;
+            booking.CheckIn =
+                checkIn;
+
+            booking.CheckOut =
+                checkOut;
+
             booking.TotalPrice =
                 CalculateTotalPrice(
                     room,
@@ -269,8 +327,8 @@ namespace lab_01.Services.Implementations
             await _bookingRepository
                 .SaveChangesAsync();
 
-            return _mapper.Map<BookingReadDto>(
-                booking
+            return await GetDetailedBookingDtoAsync(
+                booking.Id
             );
         }
 
@@ -284,10 +342,12 @@ namespace lab_01.Services.Implementations
                 );
 
             if (booking is null)
+            {
                 throw new NotFoundException(
                     nameof(Booking),
                     id
                 );
+            }
 
             EnsureUserBooking(
                 booking,
@@ -302,6 +362,29 @@ namespace lab_01.Services.Implementations
                 .SaveChangesAsync();
         }
 
+        private async Task<BookingReadDto>
+            GetDetailedBookingDtoAsync(
+                string id)
+        {
+            Booking? booking =
+                await _bookingRepository
+                    .GetByIdWithDetailsAsync(
+                        id
+                    );
+
+            if (booking is null)
+            {
+                throw new NotFoundException(
+                    nameof(Booking),
+                    id
+                );
+            }
+
+            return _mapper.Map<BookingReadDto>(
+                booking
+            );
+        }
+
         private static BookingQuery CreateQuery(
             BookingFilterDto filter,
             string? userId = null,
@@ -309,25 +392,41 @@ namespace lab_01.Services.Implementations
         {
             return new BookingQuery
             {
-                RoomId = filter.RoomId,
-                HotelId = filter.HotelId,
+                RoomId =
+                    filter.RoomId,
 
-                From = filter.From,
-                To = filter.To,
+                HotelId =
+                    filter.HotelId,
 
-                SortBy = filter.SortBy,
-                Descending = filter.Descending,
+                From =
+                    filter.From,
 
-                Page = filter.Page,
-                PageSize = filter.PageSize,
+                To =
+                    filter.To,
 
-                UserId = userId,
-                OwnerId = ownerId
+                SortBy =
+                    filter.SortBy,
+
+                Descending =
+                    filter.Descending,
+
+                Page =
+                    filter.Page,
+
+                PageSize =
+                    filter.PageSize,
+
+                UserId =
+                    userId,
+
+                OwnerId =
+                    ownerId
             };
         }
 
-        private PagedResult<BookingReadDto> MapPagedResult(
-            PagedResult<Booking> result)
+        private PagedResult<BookingReadDto>
+            MapPagedResult(
+                PagedResult<Booking> result)
         {
             return new PagedResult<BookingReadDto>
             {
@@ -336,9 +435,14 @@ namespace lab_01.Services.Implementations
                         IReadOnlyList<BookingReadDto>
                     >(result.Items),
 
-                Page = result.Page,
-                PageSize = result.PageSize,
-                TotalCount = result.TotalCount
+                Page =
+                    result.Page,
+
+                PageSize =
+                    result.PageSize,
+
+                TotalCount =
+                    result.TotalCount
             };
         }
 
@@ -372,9 +476,11 @@ namespace lab_01.Services.Implementations
             DateTime checkOut)
         {
             int nights =
-                (checkOut.Date - checkIn.Date).Days;
+                (checkOut.Date -
+                 checkIn.Date).Days;
 
-            return room.CostPerNight * nights;
+            return room.CostPerNight *
+                   nights;
         }
     }
 }

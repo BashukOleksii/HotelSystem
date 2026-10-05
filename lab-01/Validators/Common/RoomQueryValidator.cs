@@ -36,22 +36,38 @@ namespace lab_01.Validators.Room
                     !query.MaxPrice.HasValue ||
                     query.MaxPrice >= query.MinPrice
                 )
-                .WithMessage("Максимальна ціна не може бути меншою за мінімальну.");
+                .WithMessage(
+                    "Максимальна ціна не може бути меншою за мінімальну."
+                );
 
             RuleFor(x => x)
                 .Must(query =>
                     query.CheckIn.HasValue ==
                     query.CheckOut.HasValue
                 )
-                .WithMessage("Для пошуку за датами потрібно вказати і дату заселення, і дату виселення.");
+                .WithMessage(
+                    "Для пошуку за датами потрібно вказати і дату заселення, і дату виселення."
+                );
+
+            RuleFor(x => x.CheckIn)
+                .Must(date =>
+                    !date.HasValue ||
+                    date.Value.Date >= DateTime.UtcNow.Date
+                )
+                .WithMessage(
+                    "Дата заселення не може бути в минулому."
+                );
 
             RuleFor(x => x)
                 .Must(query =>
                     !query.CheckIn.HasValue ||
                     !query.CheckOut.HasValue ||
-                    query.CheckOut > query.CheckIn
+                    query.CheckOut.Value.Date >
+                    query.CheckIn.Value.Date
                 )
-                .WithMessage("Дата виселення повинна бути пізнішою за дату заселення.");
+                .WithMessage(
+                    "Дата виселення повинна бути пізнішою за дату заселення."
+                );
 
             RuleFor(x => x.SortBy)
                 .Must(sortBy =>
@@ -60,7 +76,9 @@ namespace lab_01.Validators.Room
                         sortBy.ToLowerInvariant()
                     )
                 )
-                .WithMessage("Некоректне поле сортування.");
+                .WithMessage(
+                    "Некоректне поле сортування."
+                );
         }
     }
 }

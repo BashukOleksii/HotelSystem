@@ -3,10 +3,12 @@
 <html lang="uk">
 
 <head>
+
     <meta charset="utf-8" />
 
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0" />
+          content="width=device-width,
+                   initial-scale=1.0" />
 
     <title>
         @ViewData["Title"] - HotelSystem
@@ -18,13 +20,16 @@
     <link rel="stylesheet"
           href="~/css/site.css"
           asp-append-version="true" />
+
 </head>
+
 
 <body>
 
 <header>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg
+                navbar-dark bg-dark">
 
         <div class="container">
 
@@ -43,10 +48,10 @@
                     data-bs-toggle="collapse"
                     data-bs-target="#mainNavbar"
                     aria-controls="mainNavbar"
-                    aria-expanded="false"
-                    aria-label="Перемкнути навігацію">
+                    aria-expanded="false">
 
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon">
+                </span>
 
             </button>
 
@@ -54,7 +59,10 @@
             <div class="collapse navbar-collapse"
                  id="mainNavbar">
 
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <ul class="navbar-nav me-auto
+                           mb-2 mb-lg-0">
+
 
                     <li class="nav-item">
 
@@ -68,6 +76,24 @@
                         </a>
 
                     </li>
+
+
+                    @if (User.IsInRole("User"))
+                    {
+                        <li class="nav-item">
+
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Bookings"
+                               asp-action="Index">
+
+                                Мої бронювання
+
+                            </a>
+
+                        </li>
+                    }
+
 
                     @if (User.IsInRole("Owner"))
                     {
@@ -84,31 +110,36 @@
 
                         </li>
 
+
                         <li class="nav-item">
 
-                                <a class="nav-link"
-                                   asp-area="Owner"
-                                   asp-controller="Bookings"
-                                   asp-action="Index">
+                            <a class="nav-link"
+                               asp-area="Owner"
+                               asp-controller="Bookings"
+                               asp-action="Index">
 
-                                    Бронювання
+                                Бронювання
 
-                                </a>
+                            </a>
 
                         </li>
                     }
 
-
                 </ul>
 
 
-                <ul class="navbar-nav align-items-lg-center">
+                <ul class="navbar-nav
+                           align-items-lg-center">
 
-                    @if (User.Identity?.IsAuthenticated == true)
+
+                    @if (
+                        User.Identity?.IsAuthenticated
+                        == true)
                     {
                         <li class="nav-item">
 
-                            <span class="navbar-text me-lg-3">
+                            <span class="navbar-text
+                                         me-lg-3">
 
                                 @User.Identity.Name
 
@@ -126,7 +157,8 @@
                                   class="d-inline">
 
                                 <button type="submit"
-                                        class="btn btn-outline-light">
+                                        class="btn
+                                               btn-outline-light">
 
                                     Вийти
 

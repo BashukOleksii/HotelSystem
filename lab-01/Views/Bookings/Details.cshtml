@@ -1,0 +1,115 @@
+﻿@model BookingReadDto
+
+@{
+    ViewData["Title"] =
+        "Деталі бронювання";
+}
+
+
+@if (TempData["Success"] is string successMessage)
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+
+<h1 class="mb-4">
+    Деталі бронювання
+</h1>
+
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Готель
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.HotelName
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Кімната
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.RoomNumber
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Заселення
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CheckIn.ToString("dd.MM.yyyy")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Виселення
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CheckOut.ToString("dd.MM.yyyy")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Кількість ночей
+    </dt>
+
+    <dd class="col-sm-9">
+        @((Model.CheckOut.Date -
+           Model.CheckIn.Date).Days)
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Загальна вартість
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.TotalPrice.ToString("0.00")
+    </dd>
+
+
+    <dt class="col-sm-3">
+        Створено
+    </dt>
+
+    <dd class="col-sm-9">
+        @Model.CreatedAt.ToString(
+            "dd.MM.yyyy HH:mm"
+        )
+    </dd>
+
+</dl>
+
+
+<a asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary">
+
+    Змінити дати
+
+</a>
+
+
+<a asp-action="Cancel"
+   asp-route-id="@Model.Id"
+   class="btn btn-danger">
+
+    Скасувати бронювання
+
+</a>
+
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+
+    Назад
+
+</a>

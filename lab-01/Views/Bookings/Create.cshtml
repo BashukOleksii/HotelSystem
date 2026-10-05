@@ -1,0 +1,154 @@
+﻿@model BookingCreateViewModel
+
+@{
+    ViewData["Title"] =
+        "Бронювання";
+
+    int nights =
+        (Model.Form.CheckOut.Date -
+         Model.Form.CheckIn.Date).Days;
+
+    decimal total =
+        nights > 0
+            ? nights * Model.Room.CostPerNight
+            : 0;
+}
+
+
+<h1 class="mb-4">
+    Бронювання кімнати
+</h1>
+
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>
+            @Model.Hotel.Name
+        </h4>
+
+        <p>
+            Кімната:
+            <strong>
+                @Model.Room.RoomNumber
+            </strong>
+        </p>
+
+        <p>
+            Тип:
+            <strong>
+                @Model.Room.Type
+            </strong>
+        </p>
+
+        <p>
+            Місткість:
+            <strong>
+                @Model.Room.Capacity
+            </strong>
+        </p>
+
+        <p>
+            Ціна за ніч:
+            <strong>
+                @Model.Room.CostPerNight.ToString("0.00")
+            </strong>
+        </p>
+
+    </div>
+
+</div>
+
+
+<form method="post">
+
+    <input asp-for="Form.RoomId"
+           type="hidden" />
+
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3">
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+
+            <label asp-for="Form.CheckIn"
+                   class="form-label">
+
+                Дата заселення
+
+            </label>
+
+            <input asp-for="Form.CheckIn"
+                   type="date"
+                   class="form-control" />
+
+            <span asp-validation-for="Form.CheckIn"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <label asp-for="Form.CheckOut"
+                   class="form-label">
+
+                Дата виселення
+
+            </label>
+
+            <input asp-for="Form.CheckOut"
+                   type="date"
+                   class="form-control" />
+
+            <span asp-validation-for="Form.CheckOut"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+    </div>
+
+
+    @if (nights > 0)
+    {
+        <div class="alert alert-info">
+
+            Ночей:
+            <strong>@nights</strong>
+
+            <br />
+
+            Орієнтовна вартість:
+            <strong>
+                @total.ToString("0.00")
+            </strong>
+
+        </div>
+    }
+
+
+    <button type="submit"
+            class="btn btn-success">
+
+        Підтвердити бронювання
+
+    </button>
+
+
+    <a asp-controller="Hotels"
+       asp-action="Details"
+       asp-route-id="@Model.Hotel.Id"
+       class="btn btn-secondary">
+
+        Назад
+
+    </a>
+
+</form>

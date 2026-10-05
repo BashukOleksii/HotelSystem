@@ -1,0 +1,104 @@
+﻿@model BookingEditViewModel
+
+@{
+    ViewData["Title"] =
+        "Редагування бронювання";
+}
+
+
+<h1 class="mb-4">
+    Редагування бронювання
+</h1>
+
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>
+            @Model.Booking.HotelName
+        </h4>
+
+        <p class="mb-0">
+            Кімната
+            <strong>
+                @Model.Booking.RoomNumber
+            </strong>
+        </p>
+
+    </div>
+
+</div>
+
+
+<form method="post"
+      asp-action="Edit"
+      asp-route-id="@Model.Booking.Id">
+
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3">
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-md-4 mb-3">
+
+            <label asp-for="Form.CheckIn"
+                   class="form-label">
+
+                Дата заселення
+
+            </label>
+
+            <input asp-for="Form.CheckIn"
+                   type="date"
+                   class="form-control" />
+
+            <span asp-validation-for="Form.CheckIn"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+
+        <div class="col-md-4 mb-3">
+
+            <label asp-for="Form.CheckOut"
+                   class="form-label">
+
+                Дата виселення
+
+            </label>
+
+            <input asp-for="Form.CheckOut"
+                   type="date"
+                   class="form-control" />
+
+            <span asp-validation-for="Form.CheckOut"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <button type="submit"
+            class="btn btn-primary">
+
+        Зберегти
+
+    </button>
+
+
+    <a asp-action="Details"
+       asp-route-id="@Model.Booking.Id"
+       class="btn btn-secondary">
+
+        Скасувати
+
+    </a>
+
+</form>
